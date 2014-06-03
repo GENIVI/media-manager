@@ -1,1 +1,20 @@
-This is a simple README file for the media-manager directory.
+README file for the media-manager project.
+---
+Copyright (C) Jaguar Land Rover 2014
+Copyright (C) Pelagicore 2014
+
+Media Manager
+===
+The purpose of a common Media Manager API is to provide to IVI
+applications a way to control basic playback of contents of connected
+CE devices. A single API enables a wider range of available devices
+and media without implementing separate solutions for each type of
+device.
+
+Media Manager is composed of 3 main areas:
+- Media Control Play Pause etc. including feedback for status play time etc.
+- Media Indexer incuding Metadata discovery
+- Media Browser Directory and Metadata Browsing - Artist album etc.
+
+More information here:
+http://wiki.projects.genivi.org/index.php/Media_Manager

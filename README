@@ -26,3 +26,7 @@ posting requires an application. The application process is purely to weed out
 spam, anyone interested in the project is free to join the mailing list.
 
 https://lists.genivi.org/mailman/listinfo/media-manager
+
+Reporting bugs:
+Please use the following Bugzilla for reporting bugs:
+http://bugs.genivi.org/describecomponents.cgi?product=Media%20Manager

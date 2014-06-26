@@ -1,0 +1,34 @@
+BUILD-TIME DEPENDENCIES
+===============
+* CMake (2.8.12.1 known to work)
+* Jansson (2.6 known to work)
+* Glib (2.40.0 known to work)
+* CommonAPI runtime (2.1.4 known to work)
+* CommonAPI-DBus runtime (2.1.4 knowen to work)
+* git (any version should be OK)
+
+RUN-TIME DEPENDENCIES
+===============
+* lightmediascanner (b05729db93905faeb89d4036fed21c21003e51fc known to work)
+* Rygel (b60b85d66d57e2f4e0fc520309971b9dae898ff1 +
+         a97e0e22712e11c288451c3b2078f8cc089d5600 known to work)
+* dLeyna-server (0.4.0 known to work)
+* dLeyna-renderer (0.4.0 known to work)
+
+BUILDING
+===============
+cd media-manager
+mkdir build
+cd build
+cmake ..
+
+RUNNING
+===============
+run media-manager/build/src/media-manager
+
+BUILD TROUBLESHOOTING
+===============
+The build scripts attempt to initialize a submodule in
+media-manager/interfaces, if this fails, building will also fail. If you get
+errors which seem to relate to CommonAPI interfaces, ensure that the submodule
+has been correctly initialized (if you do it yourself, CMake will pick it up).

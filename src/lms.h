@@ -17,26 +17,31 @@
 #include <string>
 #include <unistd.h>
 #include <stdlib.h>
+#include <functional>
 
 #include <gio/gio.h>
+
+#include "common.h"
 
 class LMSProvider {
 
 public:
-    LMSProvider() {}
+    LMSProvider() : 
+        connection(NULL) {}
     ~LMSProvider();
-    std::string getDatabasePath ();
+    void getDatabasePath (std::string &database_path, MmError **e);
     void startIndexing ();
     void stopIndexing ();
     std::string getIndexerStatus ();
 
-    bool connect();
+    bool connect(std::function<void(MmError *e)>);
     bool isConnected();
 
     void disconnect();
 
     unsigned int m_watcherId;
     GDBusConnection *connection;
+
 };
 
 #endif /* LMS_H */

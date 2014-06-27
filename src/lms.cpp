@@ -14,11 +14,19 @@
 #include <iostream>
 
 #include "lms.h"
+#include "common.h"
 
-std::string LMSProvider::getDatabasePath () {
+std::function<void(MmError *)> *onConnectedCallback = NULL;
+
+void LMSProvider::getDatabasePath (std::string &database_path, MmError **e) {
     GError *error = NULL;
-    std::string database_path;
     GVariant *inner, *ret;
+
+    if (!isConnected()) {
+        g_warning ("No connection to LMS");
+        *e = new MmError("No connection to LMS");
+        return;
+    }
 
     ret = g_dbus_connection_call_sync (connection,
                                      "org.lightmediascanner",
@@ -34,6 +42,8 @@ std::string LMSProvider::getDatabasePath () {
                                      NULL,
                                      &error);
     if (error) {
+        if (e)
+            (*e) = new MmError(error->message);
         g_error ("%s\n", error->message);
     }
 
@@ -41,8 +51,6 @@ std::string LMSProvider::getDatabasePath () {
     database_path = std::string(g_variant_get_string(inner, NULL));
     g_variant_unref(ret);
     g_variant_unref(inner);
-
-    return database_path;
 }
 
 void LMSProvider::startIndexing () {
@@ -103,6 +111,7 @@ static void onNameAppeared (GDBusConnection *connection,
 {
     g_print("Found lightmediascannerd on D-Bus\n");
     ((LMSProvider *) user_data)->connection = connection;
+    (*onConnectedCallback) (NULL);
 }
 
 static void onNameVanished (GDBusConnection *connection,
@@ -111,10 +120,12 @@ static void onNameVanished (GDBusConnection *connection,
 {
     g_printerr ("Failed to get name owner for %s\n",
                 name);
-    exit (1);
+    (*onConnectedCallback) (new MmError("Failed to connect to LMS, is lightmediscannerd running?"));
 }
 
-bool LMSProvider::connect() {
+bool LMSProvider::connect(std::function<void(MmError *e)> cb) {
+    onConnectedCallback = new std::function<void(MmError *e)> (cb);
+
     uint m_watcherId = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                    "org.lightmediascanner",
                                    G_BUS_NAME_WATCHER_FLAGS_NONE,
@@ -122,6 +133,11 @@ bool LMSProvider::connect() {
                                    onNameVanished,
                                    this,
                                    NULL);
+}
+
+bool LMSProvider::isConnected() {
+    return (connection && 
+            !g_dbus_connection_is_closed (connection));
 }
 
 void LMSProvider::disconnect() {

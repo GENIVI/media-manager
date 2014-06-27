@@ -20,7 +20,7 @@ IndexerStubImpl::IndexerStubImpl (LMSProvider *lms) {
 
 void IndexerStubImpl::getDatabasePath (std::string &output) {
     std::cout << "Call to " << __FUNCTION__ << std::endl;
-    output = m_lms->getDatabasePath();
+    m_lms->getDatabasePath(output, NULL);
 }
 
 void IndexerStubImpl::startIndexing() {

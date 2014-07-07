@@ -77,11 +77,15 @@ SET (GENERATED_HEADERS
 SET (SOURCES
     lms.cpp
     main.cpp
-    indexerstub.cpp)
+    indexerstub.cpp
+    serviceprovider.cpp
+    browserprovider.cpp)
 
 SET (HEADERS
     lms.h
-    indexerstub.h)
+    indexerstub.h
+    serviceprovider.h
+    browserprovider.h)
 
 ADD_CUSTOM_COMMAND (OUTPUT ${GENERATED_SOURCES} ${GENERATED_HEADERS}
                     COMMAND git submodule init &&

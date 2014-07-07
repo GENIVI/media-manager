@@ -27,7 +27,11 @@ int main (int argc, char *argv[]) {
     guint watcher_id;
     GMainLoop *loop;
     LMSProvider lms;
-    //lms.connect();
+    lms.connect([](MmError *e) {
+        if (e) {
+            std::cout << "Error connecting to LMS:" << e->message;
+        }
+    });
 
     CommonAPI::Runtime::LoadState loadState;
     auto runtime = CommonAPI::Runtime::load(loadState);

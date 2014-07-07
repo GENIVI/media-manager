@@ -30,9 +30,9 @@ public:
         connection(NULL) {}
     ~LMSProvider();
     void getDatabasePath (std::string &database_path, MmError **e);
-    void startIndexing ();
-    void stopIndexing ();
-    std::string getIndexerStatus ();
+    void startIndexing (MmError **e);
+    void stopIndexing (MmError **e);
+    std::string getIndexerStatus (MmError **e);
 
     bool connect(std::function<void(MmError *e)>);
     bool isConnected();

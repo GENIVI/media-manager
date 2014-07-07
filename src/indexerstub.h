@@ -17,14 +17,16 @@
 
 #include "lms.h"
 
+namespace MM = org::genivi::MediaManager;
+
 class IndexerStubImpl: public org::genivi::MediaManager::IndexerStubDefault {
 
 public:
     IndexerStubImpl (LMSProvider *lms);
-    virtual void getDatabasePath(std::string& output);
-    virtual void startIndexing();
-    virtual void stopIndexing();
-    virtual const org::genivi::MediaManager::Indexer::IndexerStatus& getIndexerStatusAttribute ();
+    virtual void getDatabasePath(std::string& output, MM::Indexer::IndexerError& e);
+    virtual void startIndexing(MM::Indexer::IndexerError& e);
+    virtual void stopIndexing(MM::Indexer::IndexerError& e);
+    virtual const MM::Indexer::IndexerStatus& getIndexerStatusAttribute ();
 
 private:
     LMSProvider *m_lms;

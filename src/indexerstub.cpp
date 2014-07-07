@@ -11,28 +11,54 @@
   * file, You can obtain one at http://mozilla.org/MPL/2.0/.
   */
 
-#include "indexerstub.h"
 #include <iostream>
+
+#include "indexerstub.h"
+#include "common.h"
+
+namespace MM = org::genivi::MediaManager;
 
 IndexerStubImpl::IndexerStubImpl (LMSProvider *lms) {
     m_lms = lms;
 }
 
-void IndexerStubImpl::getDatabasePath (std::string &output) {
+void IndexerStubImpl::getDatabasePath (std::string &output, MM::Indexer::IndexerError &e) {
+    MmError *error = NULL;
+
     std::cout << "Call to " << __FUNCTION__ << std::endl;
-    m_lms->getDatabasePath(output, NULL);
+    m_lms->getDatabasePath(output, &error);
+
+    if (error) {
+        std::cout << "Setting error to BACKEND_UNREACHABLE" << std::endl;
+        e = MM::Indexer::IndexerError::BACKEND_UNREACHABLE;
+    }
 }
 
-void IndexerStubImpl::startIndexing() {
+void IndexerStubImpl::startIndexing(MM::Indexer::IndexerError &e) {
+    MmError *error = NULL;
+
     std::cout << "Call to " << __FUNCTION__ << std::endl;
-    m_lms->startIndexing();
+    m_lms->startIndexing(&error);
+
+    if (error) {
+        std::cout << "Setting error to BACKEND_UNREACHABLE" << std::endl;
+        e = MM::Indexer::IndexerError::BACKEND_UNREACHABLE;
+    }
 }
 
-void IndexerStubImpl::stopIndexing() {
+void IndexerStubImpl::stopIndexing(MM::Indexer::IndexerError &e) {
+    MmError *error = NULL;
+
     std::cout << "Call to " << __FUNCTION__ << std::endl;
-    m_lms->stopIndexing();
+    m_lms->stopIndexing(&error);
+
+    if (error) {
+        std::cout << "Setting error to BACKEND_UNREACHABLE" << std::endl;
+        e = MM::Indexer::IndexerError::BACKEND_UNREACHABLE;
+    }
 }
 
-const org::genivi::MediaManager::Indexer::IndexerStatus& IndexerStubImpl::getIndexerStatusAttribute () {
-    return org::genivi::MediaManager::Indexer::IndexerStatus::RUNNING;
+const MM::Indexer::IndexerStatus& IndexerStubImpl::getIndexerStatusAttribute () {
+    std::cout << "Not implemented: Call to " << __FUNCTION__ << std::endl;
+    return MM::Indexer::IndexerStatus::RUNNING;
 }

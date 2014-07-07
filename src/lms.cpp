@@ -53,7 +53,7 @@ void LMSProvider::getDatabasePath (std::string &database_path, MmError **e) {
     g_variant_unref(inner);
 }
 
-void LMSProvider::startIndexing () {
+void LMSProvider::startIndexing (MmError **e) {
     GError *error = NULL;
     GVariant *ret;
     GVariant *param, *args;
@@ -75,13 +75,15 @@ void LMSProvider::startIndexing () {
                                      NULL,
                                      &error);
     if (error) {
-        g_error ("%s\n", error->message);
+        if (e)
+            *e = new MmError(error->message);
+        g_warning ("%s\n", error->message);
     }
 
     g_variant_unref(ret);
 }
 
-void LMSProvider::stopIndexing () {
+void LMSProvider::stopIndexing (MmError **e) {
     GError *error = NULL;
     GVariant *ret;
 
@@ -97,6 +99,8 @@ void LMSProvider::stopIndexing () {
                                      NULL,
                                      &error);
     if (error) {
+        if (e)
+            *e = new MmError(error->message);
         g_warning ("D-Bus error: %s\n", error->message);
     }
 

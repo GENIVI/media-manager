@@ -28,3 +28,13 @@ void BrowserStubImpl::listContainers(std::string path,
 
     m_browser->listContainers(path, offset, count, filter, containers, NULL);
 }
+
+void BrowserStubImpl::listItems(std::string path,
+                            uint64_t offset,
+                            uint64_t count,
+                            std::vector<std::string> filter,
+                            std::string& items,
+                            MM::Browser::BrowserError& e) {
+
+    m_browser->listItems(path, offset, count, filter, items, NULL);
+}

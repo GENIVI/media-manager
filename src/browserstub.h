@@ -30,6 +30,13 @@ public:
                                 std::string& containers,
                                 MM::Browser::BrowserError& e);
 
+    virtual void listItems(std::string path,
+                            uint64_t offset,
+                            uint64_t count,
+                            std::vector<std::string> filter,
+                            std::string& items,
+                            MM::Browser::BrowserError& e);
+
 private:
     BrowserProvider *m_browser;
 };

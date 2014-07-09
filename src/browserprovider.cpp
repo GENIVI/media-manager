@@ -16,6 +16,136 @@
 
 #include "browserprovider.h"
 
+void BrowserProvider::listContainers(std::string path,
+                                uint64_t offset,
+                                uint64_t count,
+                                std::vector<std::string> filter,
+                                std::string& containers,
+                                MmError **e)
+{
+    GError                *error  = NULL;
+    GVariant              *out    = NULL;
+    json_t                *object = NULL;
+    dleynaMediaContainer2 *mc     = NULL;
+
+    gchar **filterStrv = stdStrvToStrv(filter);
+
+    if (!BrowserProvider::connectMediaContainer(path, &mc, e))
+        return;
+
+    dleyna_media_container2_call_list_containers_sync (mc, offset, count,
+                                                       filterStrv, &out, NULL,
+                                                       &error);
+
+    if (error) {
+        std::cout << "Error in listContainers D-Bus call: " << error->message << std::endl;
+        if (e)
+            (*e)->message = error->message;
+        return;
+    }
+
+    object = DLNADictToJSON (out);
+    DLNAStringify(object, containers, e);
+
+    for (uint i = 0; i < filter.size(); i++) {
+        free (filterStrv[i]);
+    }
+}
+
+void BrowserProvider::listItems(std::string path,
+                                uint64_t offset,
+                                uint64_t count,
+                                std::vector<std::string> filter,
+                                std::string& items,
+                                MmError **e)
+{
+    GError                *error  = NULL;
+    GVariant              *out    = NULL;
+    json_t                *object = NULL;
+    dleynaMediaContainer2 *mc     = NULL;
+
+    gchar **filterStrv = stdStrvToStrv(filter);
+
+    if (!BrowserProvider::connectMediaContainer(path, &mc, e))
+        return;
+
+    dleyna_media_container2_call_list_items_sync (mc, offset, count,
+                                                  filterStrv, &out, NULL,
+                                                  &error);
+
+    if (error) {
+        std::cout << "Error in listItems D-Bus call: " << error->message << std::endl;
+        if (e)
+            (*e)->message = error->message;
+        return;
+    }
+
+    object = DLNADictToJSON (out);
+    DLNAStringify (object, items, e); 
+    json_decref (object);
+
+    for (uint i = 0; i < filter.size(); i++) {
+        free (filterStrv[i]);
+    }
+}
+
+bool BrowserProvider::connectMediaContainer (const std::string path,
+                                             dleynaMediaContainer2 **mc,
+                                             MmError **e) {
+    GError *error = NULL;
+
+    if (!g_variant_is_object_path (path.c_str())) {
+        std::string error = "Path is invalid";
+        std::cout << error << std::endl;
+        if (e)
+            (*e)->message = error;
+        return false;
+    }
+
+
+    *mc = dleyna_media_container2_proxy_new_for_bus_sync (
+                                    G_BUS_TYPE_SESSION,
+                                    G_DBUS_PROXY_FLAGS_NONE,
+                                    "com.intel.dleyna-server",
+                                    path.c_str(),
+                                    NULL,
+                                    &error);
+    if (error) {
+        std::cout << "Error creating MediaContainer2 proxy: " << error->message << std::endl;
+        if (e)
+            (*e)->message = error->message;
+        return false;
+    }
+
+    return true;
+}
+
+gchar **BrowserProvider::stdStrvToStrv(const std::vector<std::string> filter) {
+    gchar **filterStrv = new gchar*[filter.size()+1];
+    for (uint i = 0; i < filter.size(); i++) {
+        filterStrv[i] = g_strdup(filter[i].c_str());
+    }
+    filterStrv[filter.size()] = NULL;
+
+    return filterStrv;
+}
+void BrowserProvider::DLNAStringify(const json_t *object,
+                                    std::string &items,
+                                    MmError **e) {
+    char *json = json_dumps(object, 0);
+    if (!json) {
+        std::string error = "JSON builder returned null!";
+        std::cout << error << std::endl;
+        if (e)
+            (*e)->message = error;
+        return;
+    }
+
+    items = json;
+
+    free(json);
+}
+
 json_t * BrowserProvider::DLNADictToJSON (GVariant *element) {
     const GVariantType *elementType = g_variant_get_type (element);
      if (g_variant_type_is_subtype_of (elementType, G_VARIANT_TYPE_DICTIONARY)) {
@@ -62,81 +192,4 @@ json_t * BrowserProvider::DLNADictToJSON (GVariant *element) {
     }
 
     return NULL;
-}
-void BrowserProvider::listContainers(std::string path,
-                                uint64_t offset,
-                                uint64_t count,
-                                std::vector<std::string> filter,
-                                std::string& containers,
-                                MmError **e)
-{
-    GError   *error  = NULL;
-    GVariant *out    = NULL;
-    char     *json   = NULL;
-    json_t   *object = NULL;
-
-    if (!g_variant_is_object_path (path.c_str())) {
-        std::string error = "listContainers: Path is invalid";
-        std::cout << error << std::endl;
-        if (e)
-            (*e)->message = error;
-        return;
-    }
-
-    gchar **filterStrv = new gchar*[filter.size()+1];
-    for (uint i = 0; i < filter.size(); i++) {
-        filterStrv[i] = g_strdup(filter[i].c_str());
-    }
-    filterStrv[filter.size()] = NULL;
-
-    dleynaMediaContainer2 *mc = dleyna_media_container2_proxy_new_for_bus_sync (
-                                    G_BUS_TYPE_SESSION,
-                                    G_DBUS_PROXY_FLAGS_NONE,
-                                    "com.intel.dleyna-server",
-                                    path.c_str(),
-                                    NULL,
-                                    &error);
-    if (error) {
-        std::cout << "Error creating proxy in listContainers: " << error->message << std::endl;
-        if (e)
-            (*e)->message = error->message;
-        return;
-    }
-
-    error = NULL;
-    dleyna_media_container2_call_list_containers_sync (
-        mc,
-        offset,
-        count,
-        filterStrv,
-        &out,
-        NULL,
-        &error);
-
-    if (error) {
-        std::cout << "Error in listContainers D-Bus call: " << error->message << std::endl;
-        if (e)
-            (*e)->message = error->message;
-        return;
-    }
-
-
-    object = DLNADictToJSON (out);
-    json = json_dumps(object, 0);
-    json_decref (object);
-    if (!json) {
-        std::string error = "JSON builder returned null!";
-        std::cout << error << std::endl;
-        if (e)
-            (*e)->message = error;
-        return;
-    }
-
-    containers = json;
-
-    free(json);
-
-    for (uint i = 0; i < filter.size(); i++) {
-        free (filterStrv[i]);
-    }
 }

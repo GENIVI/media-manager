@@ -39,6 +39,13 @@ public:
                                 std::string& containers,
                                 MmError **e);
 
+    virtual void listItems(std::string path,
+                           uint64_t offset,
+                           uint64_t count,
+                           std::vector<std::string> filter,
+                           std::string& items,
+                           MmError **e);
+
 private:
     /**
      * Convert a DLNA dictionary, typically retrieved from dLeyna, to a JSON
@@ -49,6 +56,13 @@ private:
      * @returns JSON object representing dict
      */
     json_t *DLNADictToJSON (GVariant *element);
+    gchar **stdStrvToStrv(const std::vector<std::string> filter);
+    bool connectMediaContainer (const std::string path,
+                                dleynaMediaContainer2 **mc,
+                                MmError **e);
+    void DLNAStringify(const json_t *object,
+                       std::string &items,
+                       MmError **e);
 
 };
 

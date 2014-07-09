@@ -28,8 +28,8 @@ public:
                                 uint64_t count,
                                 std::vector<std::string> filter,
                                 std::string& containers,
-                                Browser::BrowserError& e);
+                                MM::Browser::BrowserError& e);
 
 private:
-    LMSProvider *m_browser;
-}
+    BrowserProvider *m_browser;
+};

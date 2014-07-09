@@ -19,12 +19,12 @@ BrowserStubImpl::BrowserStubImpl (BrowserProvider *browser) {
     m_browser = browser;
 }
 
-virtual void BrowserStubImpl::listContainers(std::string path,
+void BrowserStubImpl::listContainers(std::string path,
                             uint64_t offset,
                             uint64_t count,
                             std::vector<std::string> filter,
                             std::string& containers,
-                            Browser::BrowserError& e) {
+                            MM::Browser::BrowserError& e) {
 
-    m_browser->listContainers(path, offset, count, filter, containers, e);
+    m_browser->listContainers(path, offset, count, filter, containers, NULL);
 }

@@ -20,9 +20,11 @@
 #include <vector>
 
 #include <gio/gio.h>
+#include <jansson.h>
 
 #include "common.h"
 #include "serviceprovider.h"
+#include "dleyna-generated.h"
 
 class BrowserProvider : public ServiceProvider {
 
@@ -36,6 +38,18 @@ public:
                                 std::vector<std::string> filter,
                                 std::string& containers,
                                 MmError **e);
+
+private:
+    /**
+     * Convert a DLNA dictionary, typically retrieved from dLeyna, to a JSON
+     * dict.
+     *
+     * @param element DLNA dictionary
+     *
+     * @returns JSON object representing dict
+     */
+    json_t *DLNADictToJSON (GVariant *element);
+
 };
 
 #endif /* BROWSERPROVIDER_H */

@@ -11,28 +11,9 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-SET (CUSTOM_DBUS_PATH /usr/local/lib/)
-SET (INTERFACE_DIR ${MEDIAMANAGER_SOURCE_DIR}/interfaces/src-gen/)
+INCLUDE (../common.cmake)
 
-FIND_PACKAGE (PkgConfig)
-
-pkg_check_modules (PC_GIO REQUIRED gio-2.0)
-pkg_check_modules (PC_COMMONAPI REQUIRED CommonAPI)
-pkg_check_modules (PC_COMMONAPIDBUS REQUIRED CommonAPI-DBus)
-
-INCLUDE_DIRECTORIES (${PC_GIO_INCLUDE_DIRS}
-                     ${PC_COMMONAPI_INCLUDE_DIRS}
-                     ${PC_COMMONAPIDBUS_INCLUDE_DIRS})
-
-INCLUDE_DIRECTORIES (${INTERFACE_DIR})
-
-LINK_DIRECTORIES (${CUSTOM_DBUS_PATH})
-
-ADD_DEFINITIONS (${PC_COMMONAPIDBUS_CFLAGS})
-
-SET(CMAKE_CXX_FLAGS "-std=c++0x")
-
-SET (GENERATED_SOURCES
+SET (GENERATED_SOURCES_CAPI
     ${INTERFACE_DIR}/org/genivi/MediaManager/Browser.cpp
     ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusProxy.cpp
     ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusStubAdapter.cpp
@@ -47,7 +28,7 @@ SET (GENERATED_SOURCES
     ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerStubDefault.cpp
 )
 
-SET (GENERATED_HEADERS
+SET (GENERATED_HEADERS_CAPI
     ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusProxy.h
     ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusStubAdapter.h
     ${INTERFACE_DIR}/org/genivi/MediaManager/Browser.h
@@ -74,29 +55,38 @@ SET (GENERATED_HEADERS
     ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerStub.h
 )
 
+SET (GENERATED_SOURCES_DBUS
+    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.c
+    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.h)
+
 SET (SOURCES
     lms.cpp
     main.cpp
     indexerstub.cpp
     serviceprovider.cpp
-    browserprovider.cpp)
+    browserprovider.cpp
+    browserstub.cpp)
 
 SET (HEADERS
     lms.h
     indexerstub.h
     serviceprovider.h
-    browserprovider.h)
+    browserprovider.h
+    browserstub.h)
 
-ADD_CUSTOM_COMMAND (OUTPUT ${GENERATED_SOURCES} ${GENERATED_HEADERS}
+ADD_CUSTOM_COMMAND (OUTPUT ${GENERATED_SOURCES_CAPI} ${GENERATED_HEADERS_CAPI}
                     COMMAND git submodule init &&
                             git submodule update)
 
 ADD_EXECUTABLE (media-manager
                 ${SOURCES}
                 ${HEADERS}
-                ${GENERATED_SOURCES}
-                ${GENERATED_HEADERS})
+                ${GENERATED_SOURCES_CAPI}
+                ${GENERATED_HEADERS_CAPI}
+                ${GENERATED_SOURCES_DBUS})
 
 TARGET_LINK_LIBRARIES (media-manager ${PC_GIO_LIBRARIES}
                                      ${PC_COMMONAPI_LIBRARIES}
-                                     ${PC_COMMONAPIDBUS_LIBRARIES})
+                                     ${PC_COMMONAPIDBUS_LIBRARIES}
+                                     ${PC_GIO_UNIX_LIBRARIES}
+                                     ${PC_JANSSON_LIBRARIES})

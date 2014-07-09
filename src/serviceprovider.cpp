@@ -62,7 +62,7 @@ bool ServiceProvider::isConnected() {
 }
 
 void ServiceProvider::disconnect() {
-    g_bus_unwatch_name (m_watcherId);
+    //g_bus_unwatch_name (m_watcherId);
 }
 
 ServiceProvider::~ServiceProvider() {

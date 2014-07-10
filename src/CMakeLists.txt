@@ -68,13 +68,17 @@ SET (SOURCES
     indexerstub.cpp
     serviceprovider.cpp
     browserprovider.cpp
-    browserstub.cpp)
+    playerprovider.cpp
+    browserstub.cpp
+    playerstub.cpp)
 
 SET (HEADERS
     lms.h
     indexerstub.h
     serviceprovider.h
     browserprovider.h
+    playerprovider.h
+    browserstub.h
     browserstub.h)
 
 ADD_CUSTOM_COMMAND (OUTPUT ${GENERATED_SOURCES_CAPI} ${GENERATED_HEADERS_CAPI}

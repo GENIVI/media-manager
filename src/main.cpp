@@ -20,8 +20,10 @@
 
 #include "lms.h"
 #include "browserprovider.h"
+#include "playerprovider.h"
 #include "indexerstub.h"
 #include "browserstub.h"
+#include "playerstub.h"
 
 
 
@@ -30,6 +32,7 @@ int main (int argc, char *argv[]) {
     GMainLoop *loop;
     LMSProvider lms;
     BrowserProvider browser;
+    PlayerProvider player;
 
     CommonAPI::Runtime::LoadState loadState;
     auto runtime = CommonAPI::Runtime::load(loadState);
@@ -86,6 +89,23 @@ int main (int argc, char *argv[]) {
             }
         } else {
             std::cout << "Error connecting to Browser: " << e->message << std::endl;
+        }
+    });
+
+    player.connect([&](MmError *e) {
+        if (!e) {
+            auto playerStub = std::make_shared<PlayerStubImpl>(&player);
+            const std::string commonApiAddressPlayer = "local:org.genivi.MediaManager.Player:"
+                                                        "org.genivi.MediaManager.Player";
+            const bool successPlayer = servicePublisher->registerService(playerStub,
+                                                                   commonApiAddressPlayer,
+                                                                   factory);
+            if (!successPlayer) {
+                std::cerr << "Error: Unable to register Player service!\n";
+                return -1;
+            }
+        } else {
+            std::cout << "Error connecting to Player: " << e->message << std::endl;
         }
     });
 

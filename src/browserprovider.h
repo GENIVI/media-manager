@@ -58,7 +58,7 @@ private:
     json_t *DLNADictToJSON (GVariant *element);
     gchar **stdStrvToStrv(const std::vector<std::string> filter);
     bool connectMediaContainer (const std::string path,
-                                dleynaMediaContainer2 **mc,
+                                dleynaServerMediaContainer2 **mc,
                                 MmError **e);
     void DLNAStringify(const json_t *object,
                        std::string &items,

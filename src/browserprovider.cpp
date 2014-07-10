@@ -26,14 +26,14 @@ void BrowserProvider::listContainers(std::string path,
     GError                *error  = NULL;
     GVariant              *out    = NULL;
     json_t                *object = NULL;
-    dleynaMediaContainer2 *mc     = NULL;
+    dleynaServerMediaContainer2 *mc     = NULL;
 
     gchar **filterStrv = stdStrvToStrv(filter);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
 
-    dleyna_media_container2_call_list_containers_sync (mc, offset, count,
+    dleyna_server_media_container2_call_list_containers_sync (mc, offset, count,
                                                        filterStrv, &out, NULL,
                                                        &error);
 
@@ -62,14 +62,14 @@ void BrowserProvider::listItems(std::string path,
     GError                *error  = NULL;
     GVariant              *out    = NULL;
     json_t                *object = NULL;
-    dleynaMediaContainer2 *mc     = NULL;
+    dleynaServerMediaContainer2 *mc     = NULL;
 
     gchar **filterStrv = stdStrvToStrv(filter);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
 
-    dleyna_media_container2_call_list_items_sync (mc, offset, count,
+    dleyna_server_media_container2_call_list_items_sync (mc, offset, count,
                                                   filterStrv, &out, NULL,
                                                   &error);
 
@@ -81,7 +81,7 @@ void BrowserProvider::listItems(std::string path,
     }
 
     object = DLNADictToJSON (out);
-    DLNAStringify (object, items, e); 
+    DLNAStringify (object, items, e);
     json_decref (object);
 
     for (uint i = 0; i < filter.size(); i++) {
@@ -90,7 +90,7 @@ void BrowserProvider::listItems(std::string path,
 }
 
 bool BrowserProvider::connectMediaContainer (const std::string path,
-                                             dleynaMediaContainer2 **mc,
+                                             dleynaServerMediaContainer2 **mc,
                                              MmError **e) {
     GError *error = NULL;
 
@@ -103,7 +103,7 @@ bool BrowserProvider::connectMediaContainer (const std::string path,
     }
 
 
-    *mc = dleyna_media_container2_proxy_new_for_bus_sync (
+    *mc = dleyna_server_media_container2_proxy_new_for_bus_sync (
                                     G_BUS_TYPE_SESSION,
                                     G_DBUS_PROXY_FLAGS_NONE,
                                     "com.intel.dleyna-server",

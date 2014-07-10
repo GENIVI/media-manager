@@ -28,7 +28,16 @@ ADD_CUSTOM_COMMAND (OUTPUT ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-ge
                            ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.h
                     COMMAND mkdir -p ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/ &&
                             gdbus-codegen --generate-c-code ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated
-                                          --c-namespace dleyna
+                                          --c-namespace dleynaServer
                                           --interface-prefix dleyna
                                           --interface-prefix org.gnome.UPnP
                                           ${MEDIAMANAGER_SOURCE_DIR}/src/interfaces/dleyna.xml)
+
+ADD_CUSTOM_COMMAND (OUTPUT ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-renderer-generated.c
+                           ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-renderer-generated.h
+                    COMMAND mkdir -p ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/ &&
+                            gdbus-codegen --generate-c-code ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-renderer-generated
+                                          --c-namespace dleynaRenderer
+                                          --interface-prefix dleyna
+                                          --interface-prefix org.mpris
+                                          ${MEDIAMANAGER_SOURCE_DIR}/src/interfaces/dleyna-renderer.xml)

@@ -57,7 +57,10 @@ SET (GENERATED_HEADERS_CAPI
 
 SET (GENERATED_SOURCES_DBUS
     ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.c
-    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.h)
+    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.h
+    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-renderer-generated.c
+    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-renderer-generated.h
+    )
 
 SET (SOURCES
     lms.cpp

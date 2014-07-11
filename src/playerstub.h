@@ -11,6 +11,9 @@
   * file, You can obtain one at http://mozilla.org/MPL/2.0/.
   */
 
+#ifndef PLAYERSTUB_H
+#define PLAYERSTUB_H
+
 #include <CommonAPI/CommonAPI.h>
 
 #include "../src-gen/org/genivi/MediaManager/PlayerStubDefault.h"
@@ -29,3 +32,5 @@ public:
 private:
     PlayerProvider *m_player;
 };
+
+#endif /* PLAYERSTUB_H */

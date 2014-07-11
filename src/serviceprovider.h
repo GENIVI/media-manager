@@ -37,6 +37,8 @@ public:
     unsigned int m_watcherId;
     GDBusConnection *connection;
     std::string ifacePath;
+
+    std::function<void(MmError *)> *onConnectedCallback;
 };
 
 #endif /* SERVICEPROVIDER_H */

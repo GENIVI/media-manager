@@ -11,6 +11,9 @@
   * file, You can obtain one at http://mozilla.org/MPL/2.0/.
   */
 
+#ifndef INDEXERSTUB_H
+#define INDEXERSTUB_H
+
 #include <CommonAPI/CommonAPI.h>
 
 #include "../src-gen/org/genivi/MediaManager/IndexerStubDefault.h"
@@ -31,3 +34,5 @@ public:
 private:
     LMSProvider *m_lms;
 };
+
+#endif /* INDEXERSTUB_H */

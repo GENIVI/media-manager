@@ -25,6 +25,39 @@
 #include "browserstub.h"
 #include "playerstub.h"
 
+template<typename StubImpl, typename Provider>
+bool registerService (std::shared_ptr<CommonAPI::Runtime> runtime,
+                     Provider *provider,
+                      std::string address,
+                      std::string friendly,
+                      MmError *e) {
+        auto factory = runtime->createFactory();
+        if (!factory) {
+            std::cerr << "Error: Unable to create factory!\n";
+            return false;
+        }
+
+        auto servicePublisher = runtime->getServicePublisher();
+        if (!servicePublisher) {
+            std::cerr << "Error: Unable to load service publisher!\n";
+            return false;
+        }
+
+        if (!e) {
+            auto stub = std::make_shared<StubImpl>(provider);
+            const bool success= servicePublisher->registerService(stub,
+                                                                   address,
+                                                                   factory);
+            if (!success) {
+                std::cerr << "Error: Unable to register " << friendly << " service!\n";
+            }
+        } else {
+            std::cout << "Error connecting to " << friendly << ": " << e->message << std::endl;
+            return false;
+        }
+
+        return true;
+}
 
 
 int main (int argc, char *argv[]) {
@@ -41,72 +74,31 @@ int main (int argc, char *argv[]) {
         return -1;
     }
 
-    std::cout << "Runtime loaded!\n";
-
-
-    auto factory = runtime->createFactory();
-    if (!factory) {
-        std::cerr << "Error: Unable to create factory!\n";
-        return -1;
-    }
-
-    std::cout << "Factory created!\n";
-
-
-    auto servicePublisher = runtime->getServicePublisher();
-    if (!servicePublisher) {
-        std::cerr << "Error: Unable to load service publisher!\n";
-        return -1;
-    }
-
     lms.connect([&](MmError *e) {
-        if (!e) {
-            auto indexerStub = std::make_shared<IndexerStubImpl>(&lms);
-            const std::string commonApiAddressIndexer = "local:org.genivi.MediaManager.Indexer:"
-                                                        "org.genivi.MediaManager.Indexer";
-            const bool successIndexer = servicePublisher->registerService(indexerStub,
-                                                                   commonApiAddressIndexer,
-                                                                   factory);
-            if (!successIndexer) {
-                std::cerr << "Error: Unable to register Indexer service!\n";
-            }
-        } else {
-            std::cout << "Error connecting to LMS: " << e->message << std::endl;
-        }
+        registerService<IndexerStubImpl, LMSProvider> (runtime,
+                                          &lms,
+                                          "local:org.genivi.MediaManager.Indexer:"
+                                          "org.genivi.MediaManager.Indexer",
+                                          "Indexer",
+                                          e);
     });
 
     browser.connect([&](MmError *e) {
-        if (!e) {
-            auto browserStub = std::make_shared<BrowserStubImpl>(&browser);
-            const std::string commonApiAddressBrowser = "local:org.genivi.MediaManager.Browser:"
-                                                        "org.genivi.MediaManager.Browser";
-            const bool successBrowser = servicePublisher->registerService(browserStub,
-                                                                   commonApiAddressBrowser,
-                                                                   factory);
-            if (!successBrowser) {
-                std::cerr << "Error: Unable to register Browser service!\n";
-                return -1;
-            }
-        } else {
-            std::cout << "Error connecting to Browser: " << e->message << std::endl;
-        }
+        registerService<BrowserStubImpl, BrowserProvider> (runtime,
+                                          &browser,
+                                          "local:org.genivi.MediaManager.Browser:"
+                                          "org.genivi.MediaManager.Browser",
+                                          "Browser",
+                                          e);
     });
 
     player.connect([&](MmError *e) {
-        if (!e) {
-            auto playerStub = std::make_shared<PlayerStubImpl>(&player);
-            const std::string commonApiAddressPlayer = "local:org.genivi.MediaManager.Player:"
-                                                        "org.genivi.MediaManager.Player";
-            const bool successPlayer = servicePublisher->registerService(playerStub,
-                                                                   commonApiAddressPlayer,
-                                                                   factory);
-            if (!successPlayer) {
-                std::cerr << "Error: Unable to register Player service!\n";
-                return -1;
-            }
-        } else {
-            std::cout << "Error connecting to Player: " << e->message << std::endl;
-        }
+        registerService<PlayerStubImpl, PlayerProvider> (runtime,
+                                          &player,
+                                          "local:org.genivi.MediaManager.Player:"
+                                          "org.genivi.MediaManager.Player",
+                                          "Player",
+                                          e);
     });
 
     loop = g_main_loop_new (NULL, FALSE);

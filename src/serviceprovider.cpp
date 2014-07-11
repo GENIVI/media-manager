@@ -14,10 +14,9 @@
 #include <iostream>
 #include "serviceprovider.h"
 
-std::function<void(MmError *)> *spOnConnectedCallback = NULL;
-
 ServiceProvider::ServiceProvider (std::string iface) :
-    connection (NULL)
+    connection (NULL),
+    onConnectedCallback (NULL)
 {
     ifacePath = iface;
 }
@@ -27,25 +26,27 @@ static void onNameAppeared (GDBusConnection *connection,
                      const gchar     *name_owner,
                      void            *user_data)
 {
+    ServiceProvider *this_ = ((ServiceProvider *) user_data);
     std::cout << "Found " << 
         ((ServiceProvider *)user_data)->ifacePath << " on D-Bus" << std::endl;
     ((ServiceProvider *) user_data)->connection = connection;
-    (*spOnConnectedCallback) (NULL);
+    (*(this_->onConnectedCallback)) (NULL);
 }
 
 static void onNameVanished (GDBusConnection *connection,
                      const gchar     *name,
                      void        *user_data)
 {
+    ServiceProvider *this_ = ((ServiceProvider *) user_data);
     g_printerr ("Failed to get name owner for %s\n",
                 name);
-    (*spOnConnectedCallback) (new MmError("Failed to connect to LMS, is " +
-        ((ServiceProvider *) user_data)->ifacePath + " running?"));
+    (*(this_->onConnectedCallback)) (new MmError("Failed to connect to LMS, is " +
+        this_->ifacePath + " running?"));
 }
 
 bool ServiceProvider::connect(std::function<void(MmError *e)> cb)
 {
-    spOnConnectedCallback = new std::function<void(MmError *e)> (cb);
+    onConnectedCallback = new std::function<void(MmError *e)> (cb);
 
     uint m_watcherId = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                    ifacePath.c_str(),
@@ -54,6 +55,7 @@ bool ServiceProvider::connect(std::function<void(MmError *e)> cb)
                                    onNameVanished,
                                    this,
                                    NULL);
+    return true;
 }
 
 bool ServiceProvider::isConnected() {

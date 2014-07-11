@@ -11,6 +11,9 @@
   * file, You can obtain one at http://mozilla.org/MPL/2.0/.
   */
 
+#ifndef BROWSERSTUB_H
+#define BROWSERSTUB_H
+
 #include <CommonAPI/CommonAPI.h>
 
 #include "../src-gen/org/genivi/MediaManager/BrowserStubDefault.h"
@@ -40,3 +43,5 @@ public:
 private:
     BrowserProvider *m_browser;
 };
+
+#endif /* BROWSERSTUB_H */

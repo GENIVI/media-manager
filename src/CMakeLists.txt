@@ -13,55 +13,6 @@ cmake_minimum_required(VERSION 2.6)
 
 INCLUDE (../common.cmake)
 
-SET (GENERATED_SOURCES_CAPI
-    ${INTERFACE_DIR}/org/genivi/MediaManager/Browser.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusProxy.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusStubAdapter.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserStubDefault.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/Indexer.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerDBusProxy.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerDBusStubAdapter.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerStubDefault.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/Player.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerDBusProxy.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerDBusStubAdapter.cpp
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerStubDefault.cpp
-)
-
-SET (GENERATED_HEADERS_CAPI
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusProxy.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserDBusStubAdapter.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/Browser.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserProxyBase.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserProxy.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserServiceAbstract.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserStubDefault.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/BrowserStub.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerDBusProxy.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerDBusStubAdapter.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/Indexer.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerProxyBase.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerProxy.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerServiceAbstract.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerStubDefault.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/IndexerStub.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerDBusProxy.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerDBusStubAdapter.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/Player.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerProxyBase.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerProxy.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerServiceAbstract.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerStubDefault.h
-    ${INTERFACE_DIR}/org/genivi/MediaManager/PlayerStub.h
-)
-
-SET (GENERATED_SOURCES_DBUS
-    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.c
-    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.h
-    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-renderer-generated.c
-    ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-renderer-generated.h
-    )
-
 SET (SOURCES
     lms.cpp
     main.cpp

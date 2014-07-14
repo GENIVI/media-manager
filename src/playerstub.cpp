@@ -19,6 +19,49 @@ PlayerStubImpl::PlayerStubImpl (PlayerProvider *player) {
     m_player = player;
 }
 
+void PlayerStubImpl::next(MM::Player::PlayerError& e) {
+    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+}
+
 void PlayerStubImpl::openUri(std::string uri, MM::Player::PlayerError& e) {
-    m_player->openURI(uri, NULL);
+    MmError *error = NULL;
+
+    m_player->openURI(uri, &error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+    }
+}
+
+void PlayerStubImpl::openPlaylist(std::string uri, MM::Player::PlayerError& e){
+    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+}
+
+void PlayerStubImpl::pause(MM::Player::PlayerError& e){
+    MmError *error = NULL;
+    m_player->pause(&error);
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
+}
+
+void PlayerStubImpl::play(MM::Player::PlayerError& e){
+    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+}
+
+void PlayerStubImpl::playPause(MM::Player::PlayerError& e){
+    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+}
+
+void PlayerStubImpl::previous(MM::Player::PlayerError& e){
+    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+}
+
+void PlayerStubImpl::seek(int64_t pos, MM::Player::PlayerError& e){
+    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+}
+
+void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
+    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
 }

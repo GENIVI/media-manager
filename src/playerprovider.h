@@ -31,13 +31,14 @@ class PlayerProvider : public ServiceProvider {
 public:
     PlayerProvider() : ServiceProvider("com.intel.dleyna-renderer") {}
     ~PlayerProvider() {}
-    void openURI(std::string uri,
-                 MmError **e);
+    void openURI(std::string uri, MmError **e);
+    void pause(MmError **e);
 
 private:
 bool connectMediaPlayer (const std::string path,
                          dleynaRendererMediaPlayer2Player **mc,
                          MmError **e);
+void checkError (GError *error, MmError **e);
 
 };
 

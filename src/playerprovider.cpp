@@ -26,13 +26,32 @@ void PlayerProvider::openURI(std::string uri,
 
     if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
-    dleyna_renderer_media_player2_player_call_open_uri_sync (mp, uri.c_str(), NULL,
-                                                  &error);
+    dleyna_renderer_media_player2_player_call_open_uri_sync (mp,
+                                                             uri.c_str(),
+                                                             NULL,
+                                                             &error);
 
+    checkError (error, e);
+}
+
+void PlayerProvider::pause(MmError **e) {
+    GError                           *error = NULL;
+    dleynaRendererMediaPlayer2Player *mp    = NULL;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+        return;
+    dleyna_renderer_media_player2_player_call_pause_sync (mp,
+                                                             NULL,
+                                                             &error);
+
+    checkError (error, e);
+}
+
+void PlayerProvider::checkError (GError *error, MmError **e) {
     if (error) {
-        std::cout << "Error in listItems D-Bus call: " << error->message << std::endl;
+        std::cout << "Error in " << __FUNCTION__ << " D-Bus call: " << error->message << std::endl;
         if (e)
-            (*e)->message = error->message;
+            (*e) = new MmError(error->message);
         return;
     }
 }
@@ -49,7 +68,6 @@ bool PlayerProvider::connectMediaPlayer (const std::string path,
             (*e)->message = error;
         return false;
     }
-
 
     *mp = dleyna_renderer_media_player2_player_proxy_new_for_bus_sync (
                                     G_BUS_TYPE_SESSION,

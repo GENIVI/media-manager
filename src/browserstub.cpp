@@ -38,3 +38,11 @@ void BrowserStubImpl::listItems(std::string path,
 
     m_browser->listItems(path, offset, count, filter, items, NULL);
 }
+
+void BrowserStubImpl::createReference(std::string path,
+                         std::string reference,
+                         std::string& result,
+                         MM::Browser::BrowserError& e) {
+
+    m_browser->createReference(path, reference, result, NULL);
+}

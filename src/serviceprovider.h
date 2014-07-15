@@ -31,6 +31,7 @@ public:
 
     bool connect(std::function<void(MmError *e)>);
     bool isConnected();
+    bool checkError (GError *, MmError**);
 
     void disconnect();
 

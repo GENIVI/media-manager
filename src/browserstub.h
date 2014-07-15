@@ -26,19 +26,23 @@ class BrowserStubImpl: public org::genivi::MediaManager::BrowserStubDefault {
 
 public:
     BrowserStubImpl (BrowserProvider *browser);
-    virtual void listContainers(std::string path,
+    void listContainers(std::string path,
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
                                 std::string& containers,
                                 MM::Browser::BrowserError& e);
 
-    virtual void listItems(std::string path,
+    void listItems(std::string path,
                             uint64_t offset,
                             uint64_t count,
                             std::vector<std::string> filter,
                             std::string& items,
                             MM::Browser::BrowserError& e);
+    void createReference(std::string path,
+                             std::string reference,
+                             std::string& result,
+                             MM::Browser::BrowserError& e);
 
 private:
     BrowserProvider *m_browser;

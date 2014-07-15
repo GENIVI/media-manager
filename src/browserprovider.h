@@ -32,19 +32,24 @@ public:
     BrowserProvider() : ServiceProvider("com.intel.dleyna-server") {}
     ~BrowserProvider() {}
 
-    virtual void listContainers(std::string path,
-                                uint64_t offset,
-                                uint64_t count,
-                                std::vector<std::string> filter,
-                                std::string& containers,
-                                MmError **e);
+    void listContainers(std::string path,
+                        uint64_t offset,
+                        uint64_t count,
+                        std::vector<std::string> filter,
+                        std::string& containers,
+                        MmError **e);
 
-    virtual void listItems(std::string path,
-                           uint64_t offset,
-                           uint64_t count,
-                           std::vector<std::string> filter,
-                           std::string& items,
-                           MmError **e);
+    void listItems(std::string path,
+                   uint64_t offset,
+                   uint64_t count,
+                   std::vector<std::string> filter,
+                   std::string& items,
+                   MmError **e);
+
+    void createReference(std::string path,
+                         std::string reference,
+                         std::string& result,
+                         MmError **e);
 
 private:
     /**

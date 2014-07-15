@@ -33,12 +33,13 @@ public:
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);
     void pause(MmError **e);
+    void play(MmError **e);
+    void playPause(MmError **e);
 
 private:
 bool connectMediaPlayer (const std::string path,
                          dleynaRendererMediaPlayer2Player **mc,
                          MmError **e);
-void checkError (GError *error, MmError **e);
 
 };
 

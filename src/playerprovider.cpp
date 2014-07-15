@@ -16,7 +16,7 @@
 
 #include "playerprovider.h"
 
-#define PLAYER_PATH "/com/intel/dLeynaRenderer/server/1"
+#define PLAYER_PATH "/com/intel/dLeynaRenderer/server/0"
 
 void PlayerProvider::openURI(std::string uri,
                              MmError **e)
@@ -47,13 +47,30 @@ void PlayerProvider::pause(MmError **e) {
     checkError (error, e);
 }
 
-void PlayerProvider::checkError (GError *error, MmError **e) {
-    if (error) {
-        std::cout << "Error in " << __FUNCTION__ << " D-Bus call: " << error->message << std::endl;
-        if (e)
-            (*e) = new MmError(error->message);
+void PlayerProvider::play(MmError **e) {
+    GError                           *error = NULL;
+    dleynaRendererMediaPlayer2Player *mp    = NULL;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
-    }
+    dleyna_renderer_media_player2_player_call_play_sync (mp,
+                                                         NULL,
+                                                         &error);
+
+    checkError (error, e);
+}
+
+void PlayerProvider::playPause(MmError **e) {
+    GError                           *error = NULL;
+    dleynaRendererMediaPlayer2Player *mp    = NULL;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+        return;
+    dleyna_renderer_media_player2_player_call_play_pause_sync (mp,
+                                                               NULL,
+                                                               &error);
+
+    checkError (error, e);
 }
 
 bool PlayerProvider::connectMediaPlayer (const std::string path,

@@ -40,6 +40,7 @@ void PlayerStubImpl::openPlaylist(std::string uri, MM::Player::PlayerError& e){
 void PlayerStubImpl::pause(MM::Player::PlayerError& e){
     MmError *error = NULL;
     m_player->pause(&error);
+
     if (error) {
         e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
         free (error);
@@ -47,11 +48,23 @@ void PlayerStubImpl::pause(MM::Player::PlayerError& e){
 }
 
 void PlayerStubImpl::play(MM::Player::PlayerError& e){
-    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+    MmError *error = NULL;
+    m_player->play(&error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
 }
 
 void PlayerStubImpl::playPause(MM::Player::PlayerError& e){
-    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+    MmError *error = NULL;
+    m_player->playPause(&error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
 }
 
 void PlayerStubImpl::previous(MM::Player::PlayerError& e){

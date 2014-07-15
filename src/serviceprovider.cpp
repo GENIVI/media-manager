@@ -70,3 +70,13 @@ void ServiceProvider::disconnect() {
 ServiceProvider::~ServiceProvider() {
     disconnect();
 }
+
+bool ServiceProvider::checkError (GError *error, MmError **e) {
+    if (error) {
+        std::cout << "Error in " << __FUNCTION__ << " D-Bus call: " << error->message << std::endl;
+        if (e)
+            (*e) = new MmError(error->message);
+        return false;
+    }
+    return true;
+}

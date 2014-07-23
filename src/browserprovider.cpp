@@ -111,6 +111,36 @@ void BrowserProvider::createReference(std::string path,
         return;
     }
 }
+void BrowserProvider::createContainer(std::string path,
+                     std::string displayname,
+                     std::vector<std::string> childTypes,
+                     std::string& result,
+                     MmError **e)
+{
+    GError                      *error  = NULL;
+    gchar                       *out    = NULL;
+    dleynaServerMediaContainer2 *mc     = NULL;
+
+    gchar **ct = stdStrvToStrv (childTypes);
+
+    if (!BrowserProvider::connectMediaContainer(path, &mc, e))
+        return;
+    dleyna_server_media_container2_call_create_container_sync (mc,
+                                                              displayname.c_str(),
+                                                              "container",
+                                                              ct,
+                                                              &out, NULL,
+                                                              &error);
+
+    if (error) {
+        std::cout << "Error in listItems D-Bus call: " << error->message << std::endl;
+        if (e)
+            (*e)->message = error->message;
+        return;
+    }
+
+    result = out;
+}
 
 bool BrowserProvider::connectMediaContainer (const std::string path,
                                              dleynaServerMediaContainer2 **mc,

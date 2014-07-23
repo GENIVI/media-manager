@@ -51,6 +51,12 @@ public:
                          std::string& result,
                          MmError **e);
 
+    void createContainer(std::string path,
+                         std::string displayname,
+                         std::vector<std::string> childTypes,
+                         std::string& result,
+                         MmError **e);
+
 private:
     /**
      * Convert a DLNA dictionary, typically retrieved from dLeyna, to a JSON

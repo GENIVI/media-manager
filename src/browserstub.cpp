@@ -46,3 +46,11 @@ void BrowserStubImpl::createReference(std::string path,
 
     m_browser->createReference(path, reference, result, NULL);
 }
+
+void BrowserStubImpl::createContainer(std::string path,
+                     std::string displayname,
+                     std::vector<std::string> childTypes,
+                     std::string& result,
+                     MM::Browser::BrowserError& e) {
+    m_browser->createContainer (path, displayname, childTypes, result, NULL);
+}

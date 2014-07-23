@@ -39,10 +39,17 @@ public:
                             std::vector<std::string> filter,
                             std::string& items,
                             MM::Browser::BrowserError& e);
+
     void createReference(std::string path,
                              std::string reference,
                              std::string& result,
                              MM::Browser::BrowserError& e);
+
+    void createContainer(std::string path,
+                         std::string displayname,
+                         std::vector<std::string> childTypes,
+                         std::string& result,
+                         MM::Browser::BrowserError& e);
 
 private:
     BrowserProvider *m_browser;

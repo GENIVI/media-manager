@@ -22,7 +22,7 @@ LINK_DIRECTORIES (${CUSTOM_DBUS_PATH})
 
 ADD_DEFINITIONS (${PC_COMMONAPIDBUS_CFLAGS} ${PC_GIO_UNIX_CFLAGS})
 
-SET(CMAKE_CXX_FLAGS "-std=c++0x")
+ADD_DEFINITIONS ("-std=c++11")
 
 ADD_CUSTOM_COMMAND (OUTPUT ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.c
                            ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.h

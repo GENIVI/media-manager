@@ -37,7 +37,7 @@ TEST_F(BrowserProviderTest, ListContainersRoot) {
         std::vector<std::string> filter;
         std::string containers;
         MmError *listContainersError;
-        json_t *containersJson, *value;
+        json_t *containersJson;
         json_error_t jsonError;
         size_t index;
 
@@ -55,7 +55,8 @@ TEST_F(BrowserProviderTest, ListContainersRoot) {
 
         containersJson = json_loads (containers.c_str(), 0, &jsonError);
 
-        json_array_foreach(containersJson, index, value) {
+        for (index = 0; index < json_array_size(containersJson); index++){
+            const json_t* value = json_array_get (containersJson, index);
             ASSERT_TRUE (json_object_get (value, "DisplayName") != NULL);
             ASSERT_TRUE (json_object_get (value, "Path") != NULL);
         }
@@ -70,7 +71,7 @@ TEST_F(BrowserProviderTest, ListItemsRoot) {
         std::vector<std::string> filter;
         std::string containers;
         MmError *listItemsError;
-        json_t *containersJson, *value;
+        json_t *containersJson;
         json_error_t jsonError;
         size_t index;
 
@@ -90,7 +91,8 @@ TEST_F(BrowserProviderTest, ListItemsRoot) {
 
         std::cout << containers << std::endl;
 
-        json_array_foreach(containersJson, index, value) {
+        for (index = 0; index < json_array_size(containersJson); index++){
+            const json_t* value = json_array_get (containersJson, index);
             ASSERT_TRUE (json_object_get (value, "DisplayName") != NULL);
             ASSERT_TRUE (json_object_get (value, "Path") != NULL);
         }

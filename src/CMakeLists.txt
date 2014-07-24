@@ -48,3 +48,9 @@ TARGET_LINK_LIBRARIES (media-manager ${PC_GIO_LIBRARIES}
                                      ${PC_COMMONAPIDBUS_LIBRARIES}
                                      ${PC_GIO_UNIX_LIBRARIES}
                                      ${PC_JANSSON_LIBRARIES})
+
+INSTALL(TARGETS media-manager
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)

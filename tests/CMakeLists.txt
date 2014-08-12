@@ -15,7 +15,7 @@ ADD_SUBDIRECTORY (gmock-1.7.0)
 SET (GMOCK_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/tests/gmock-1.7.0/include")
 SET (GTEST_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/tests/gmock-1.7.0/gtest/include")
 
-ADD_SUBDIRECTORY (lmsprovider)
+#ADD_SUBDIRECTORY (lmsprovider)
 ADD_SUBDIRECTORY (browserprovider)
 ADD_SUBDIRECTORY (playerprovider)
 ADD_SUBDIRECTORY (player_commonapi)

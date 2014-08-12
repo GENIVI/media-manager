@@ -41,6 +41,7 @@ GENIVI Media Manager debug files
 tar xvfz interfaces.tar.gz
 
 %build
+export PKG_CONFIG_PATH=/opt/genivi/lib/pkgconfig/
 %cmake .
 
 make %{?jobs:-j%jobs}

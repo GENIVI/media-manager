@@ -16,6 +16,112 @@
 
 #include "browserprovider.h"
 
+bool BrowserProvider::pathIsMediaManager(std::string path, MmError **e) {
+    GError *error = NULL;
+    GDBusProxy *proxy = NULL;
+    GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION,
+                                            NULL,
+                                            &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to get connection to bus";
+        return false;
+    }
+
+    proxy = g_dbus_proxy_new_sync (conn,
+                                   G_DBUS_PROXY_FLAGS_NONE,
+                                   NULL,
+                                   "com.intel.dleyna-server",
+                                   path.c_str(),
+                                   "org.freedesktop.DBus.Properties",
+                                   NULL,
+                                   &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to create proxy for " + path;
+        return false;
+    }
+
+    GVariant *ret = g_dbus_proxy_call_sync (proxy,
+                                            "Get",
+                                            g_variant_new("(ss)",
+                                                          "org.gnome.UPnP.MediaObject2",
+                                                          "DisplayName"),
+                                            G_DBUS_CALL_FLAGS_NONE,
+                                            -1,
+                                            NULL,
+                                            &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to get property for " + path;
+        return false;
+    }
+
+    GVariant *inner = g_variant_get_child_value (ret, 0);
+    GVariant *inner2 = g_variant_get_variant (inner);
+    const char *displayName = g_variant_get_string(inner2, 0);
+
+    return g_strcmp0(displayName, MEDIA_MANAGER_IDENTIFIER) == 0;
+}
+
+void BrowserProvider::discoverMediaManagers(std::vector<std::string> &managers, MmError **e)
+{
+    GError *error = NULL;
+    GDBusProxy *proxy = NULL;
+    GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION,
+                                            NULL,
+                                            &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to get connection to bus";
+        return;
+    }
+
+    proxy = g_dbus_proxy_new_sync (conn,
+                                   G_DBUS_PROXY_FLAGS_NONE,
+                                   NULL,
+                                   "com.intel.dleyna-server",
+                                   "/com/intel/dLeynaServer",
+                                   "com.intel.dLeynaServer.Manager",
+                                   NULL,
+                                   &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to create proxy for com.intel.dLeynaServer.Manager";
+        return;
+    }
+
+    GVariant *ret = g_dbus_proxy_call_sync (proxy,
+                                            "GetServers",
+                                            NULL,
+                                            G_DBUS_CALL_FLAGS_NONE,
+                                            -1,
+                                            NULL,
+                                            &error);
+
+    ret = g_variant_get_child_value(ret, 0);
+
+    gsize numObjs = 0;
+    const char **objs = g_variant_get_objv (ret, &numObjs);
+
+    for (gsize i = 0; i < numObjs; i++) {
+        if (pathIsMediaManager(objs[i], e)) {
+            managers.push_back (objs[i]);
+        }
+    }
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to get servers from dLeyna";
+    }
+
+}
+
 void BrowserProvider::listContainers(std::string path,
                                 uint64_t offset,
                                 uint64_t count,

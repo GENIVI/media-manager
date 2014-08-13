@@ -19,6 +19,11 @@ BrowserStubImpl::BrowserStubImpl (BrowserProvider *browser) {
     m_browser = browser;
 }
 
+void BrowserStubImpl::discoverMediaManagers(std::vector<std::string> &idents,
+                                            MM::Browser::BrowserError& e) {
+    m_browser->discoverMediaManagers(idents, NULL);
+}
+
 void BrowserStubImpl::listContainers(std::string path,
                             uint64_t offset,
                             uint64_t count,

@@ -26,11 +26,16 @@
 #include "serviceprovider.h"
 #include "dleyna-generated.h"
 
+#define MEDIA_MANAGER_IDENTIFIER "GENIVI MediaManager"
+
 class BrowserProvider : public ServiceProvider {
 
 public:
     BrowserProvider() : ServiceProvider("com.intel.dleyna-server") {}
     ~BrowserProvider() {}
+
+    void discoverMediaManagers (std::vector<std::string> &managers,
+                                MmError **e);
 
     void listContainers(std::string path,
                         uint64_t offset,
@@ -74,7 +79,7 @@ private:
     void DLNAStringify(const json_t *object,
                        std::string &items,
                        MmError **e);
-
+    bool pathIsMediaManager(std::string, MmError **e);
 };
 
 #endif /* BROWSERPROVIDER_H */

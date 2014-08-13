@@ -21,6 +21,22 @@ protected:
     GMainLoop *loop;
 };
 
+TEST_F(BrowserProviderTest, DiscoverMediaManagers) {
+    browserprovider.connect([&](MmError *browserError) {
+        std::vector<std::string> managers;
+        browserprovider.discoverMediaManagers(managers, NULL);
+
+        for (int i = 0; i < managers.size(); i++) {
+            std::cout << "Found manager: " << managers[i] << std::endl;
+        }
+
+        g_main_loop_quit (loop);
+    });
+
+    loop = g_main_loop_new (NULL, FALSE);
+    g_main_loop_run (loop);
+}
+
 TEST_F(BrowserProviderTest, Connect) {
     browserprovider.connect([&](MmError *browserError) {
         g_main_loop_quit (loop);
@@ -29,7 +45,6 @@ TEST_F(BrowserProviderTest, Connect) {
 
     loop = g_main_loop_new (NULL, FALSE);
     g_main_loop_run (loop);
-
 }
 
 TEST_F(BrowserProviderTest, ListContainersRoot) {

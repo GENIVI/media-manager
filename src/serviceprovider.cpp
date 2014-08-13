@@ -40,13 +40,39 @@ static void onNameVanished (GDBusConnection *connection,
     ServiceProvider *this_ = ((ServiceProvider *) user_data);
     g_printerr ("Failed to get name owner for %s\n",
                 name);
-    (*(this_->onConnectedCallback)) (new MmError("Failed to connect to LMS, is " +
+    (*(this_->onConnectedCallback)) (new MmError("Failed to connect, is " +
         this_->ifacePath + " running?"));
 }
 
 bool ServiceProvider::connect(std::function<void(MmError *e)> cb)
 {
     onConnectedCallback = new std::function<void(MmError *e)> (cb);
+    GError *error = NULL;
+
+    /* Create a dummy proxy, so that we can poke the service to life if it
+       is activatable, but not yet started. Then use the g_bus_watcher for
+       further interaction. DBus activation is not supported using the
+       watcher. */
+    GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION,
+                                            NULL,
+                                            &error);
+
+    if (error) {
+        g_printerr ("Failed to get bus: %s", error->message);
+        return false;
+    }
+
+    GDBusProxy *proxy = g_dbus_proxy_new_sync (conn,
+                                               G_DBUS_PROXY_FLAGS_NONE,
+                                               NULL,
+                                               ifacePath.c_str(),
+                                               "/",
+                                               "org.freedesktop.DBus.Peer",
+                                               NULL,
+                                               &error);
+   g_object_unref(proxy);
+   g_object_unref(conn);
+
 
     uint m_watcherId = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                    ifacePath.c_str(),

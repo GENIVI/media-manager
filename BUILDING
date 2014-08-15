@@ -4,7 +4,7 @@ BUILD-TIME DEPENDENCIES
 * Jansson (2.6 known to work)
 * Glib (2.40.0 known to work)
 * CommonAPI runtime (2.1.4 known to work)
-* CommonAPI-DBus runtime (2.1.4 knowen to work)
+* CommonAPI-DBus runtime (2.1.4 known to work)
 * git (any version should be OK)
 
 RUN-TIME DEPENDENCIES

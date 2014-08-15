@@ -78,3 +78,8 @@ void PlayerStubImpl::seek(int64_t pos, MM::Player::PlayerError& e){
 void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
     std::cout << __FUNCTION__ << " is not implemented" << std::endl;
 }
+
+const MM::Player::MuteStatus& PlayerStubImpl::getMuteAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId) {
+    std::cout << "In " << __FUNCTION__ << std::endl;
+    return MM::Player::MuteStatus::MUTED;
+}

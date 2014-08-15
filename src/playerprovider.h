@@ -40,6 +40,7 @@ private:
 bool connectMediaPlayer (const std::string path,
                          dleynaRendererMediaPlayer2Player **mc,
                          MmError **e);
+char *findFirstPlayer(MmError **e);
 
 };
 

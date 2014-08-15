@@ -70,8 +70,8 @@ bool ServiceProvider::connect(std::function<void(MmError *e)> cb)
                                                "org.freedesktop.DBus.Peer",
                                                NULL,
                                                &error);
-   g_object_unref(proxy);
-   g_object_unref(conn);
+    g_object_unref(proxy);
+    g_object_unref(conn);
 
 
     uint m_watcherId = g_bus_watch_name (G_BUS_TYPE_SESSION,

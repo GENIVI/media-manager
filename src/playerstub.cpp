@@ -20,7 +20,13 @@ PlayerStubImpl::PlayerStubImpl (PlayerProvider *player) {
 }
 
 void PlayerStubImpl::next(MM::Player::PlayerError& e) {
-    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+    MmError *error = NULL;
+
+    m_player->next(&error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+    }
 }
 
 void PlayerStubImpl::openUri(std::string uri, MM::Player::PlayerError& e) {
@@ -34,7 +40,13 @@ void PlayerStubImpl::openUri(std::string uri, MM::Player::PlayerError& e) {
 }
 
 void PlayerStubImpl::openPlaylist(std::string uri, MM::Player::PlayerError& e){
-    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+    MmError *error = new MmError("");
+    m_player->openPlaylist(uri, &error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
 }
 
 void PlayerStubImpl::pause(MM::Player::PlayerError& e){
@@ -68,7 +80,13 @@ void PlayerStubImpl::playPause(MM::Player::PlayerError& e){
 }
 
 void PlayerStubImpl::previous(MM::Player::PlayerError& e){
-    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+    MmError *error = NULL;
+
+    m_player->previous(&error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+    }
 }
 
 void PlayerStubImpl::seek(int64_t pos, MM::Player::PlayerError& e){
@@ -82,4 +100,33 @@ void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
 const MM::Player::MuteStatus& PlayerStubImpl::getMuteAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId) {
     std::cout << "In " << __FUNCTION__ << std::endl;
     return MM::Player::MuteStatus::MUTED;
+}
+
+bool PlayerStubImpl::trySetRateAttribute(MM::Player::RateStatus value) {
+    std::cout << "In " << __FUNCTION__ << std::endl;
+    MmError *error = NULL;
+    double rate = 1;
+
+    switch (value) {
+        case RATE_1:
+            rate = 1;
+            break;
+        case RATE_2:
+            rate = 2;
+            break;
+        case RATE_4:
+            rate = 4;
+            break;
+        case RATE_8:
+            rate = 8;
+            break;
+        case RATE_16:
+            rate = 16;
+            break;
+        default:
+            std::cout << "Failed to set rate" << std::endl;
+            return false;
+    }
+    m_player->setRate(rate, &error);
+    return true;
 }

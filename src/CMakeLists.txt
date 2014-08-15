@@ -21,9 +21,11 @@ SET (SOURCES
     browserprovider.cpp
     playerprovider.cpp
     browserstub.cpp
-    playerstub.cpp)
+    playerstub.cpp
+    common.cpp)
 
 SET (HEADERS
+    common.h
     lms.h
     indexerstub.h
     serviceprovider.h

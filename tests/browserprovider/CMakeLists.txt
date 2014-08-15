@@ -7,6 +7,7 @@ INCLUDE_DIRECTORIES (${GMOCK_INCLUDE_DIR}
                      ${CMAKE_SOURCE_DIR}/src/)
 
 SET (SOURCES
+        ${CMAKE_SOURCE_DIR}/src/common.cpp
         ${CMAKE_SOURCE_DIR}/src/browserprovider.cpp
         ${CMAKE_SOURCE_DIR}/src/serviceprovider.cpp
         ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.c
@@ -14,6 +15,7 @@ SET (SOURCES
 )
 
 SET (HEADERS
+        ${CMAKE_SOURCE_DIR}/src/common.h
         ${CMAKE_SOURCE_DIR}/src/browserprovider.h
         ${CMAKE_SOURCE_DIR}/src/serviceprovider.h
         ${MEDIAMANAGER_BINARY_DIR}/generated/dleyna/dleyna-generated.h

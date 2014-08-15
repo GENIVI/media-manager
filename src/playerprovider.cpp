@@ -139,6 +139,37 @@ void PlayerProvider::playPause(MmError **e) {
     checkError (error, e);
 }
 
+void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError                           *error = NULL;
+    dleynaServerMediaContainer2      *mc    = NULL;
+    GVariant *out = NULL;
+
+    std::vector<std::string> filter;
+    filter.push_back("*");
+
+    int offset = 0;
+    int count = 100;
+    gchar **filterStrv = stdStrvToStrv(filter);
+
+    if (!PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
+        return;
+
+    dleyna_server_media_container2_call_list_items_sync (mc, offset, count,
+                                                  filterStrv, &out, NULL,
+                                                  &error);
+
+    std::string containers;
+    std::cout << "Setting play queue to: " << playlistPath << std::endl;
+
+    playqueue = DLNADictToJSON (out);
+
+    playQueuePosition = 0;
+    changePlayQueuePosition (0, e);
+
+    checkError (error, e);
+}
+
 bool PlayerProvider::connectMediaPlayer (const std::string path,
                                              dleynaRendererMediaPlayer2Player **mp,
                                              MmError **e) {
@@ -173,4 +204,171 @@ bool PlayerProvider::connectMediaPlayer (const std::string path,
     }
 
     return true;
+}
+
+/*TODO: Move to some common place */
+bool PlayerProvider::connectMediaContainer (const std::string path,
+                                             dleynaServerMediaContainer2 **mc,
+                                             MmError **e) {
+    GError *error = NULL;
+
+    if (!g_variant_is_object_path (path.c_str())) {
+        std::string error = "Path is invalid";
+        std::cout << error << std::endl;
+        if (e)
+            (*e)->message = error;
+        return false;
+    }
+
+
+    *mc = dleyna_server_media_container2_proxy_new_for_bus_sync (
+                                    G_BUS_TYPE_SESSION,
+                                    G_DBUS_PROXY_FLAGS_NONE,
+                                    "com.intel.dleyna-server",
+                                    path.c_str(),
+                                    NULL,
+                                    &error);
+    if (error) {
+        std::cout << "Error creating MediaContainer2 proxy: " << error->message << std::endl;
+        if (e)
+            (*e)->message = error->message;
+        return false;
+    }
+
+    return true;
+}
+
+std::string PlayerProvider::getDisplayName (json_t *item, bool &ok) {
+    if (!item) {
+        std::cout << "Item is null" << std::endl;
+        ok = false;
+        return "";
+    }
+
+    json_t *displayName = json_object_get (item, "DisplayName");
+    if (!displayName) {
+        std::cout << "Key 'DisplayName' not found" << std::endl;
+        ok = false;
+        return "";
+    }
+
+    const char *displayNameStr = json_string_value(displayName);
+    if (!displayNameStr) {
+        std::cout << "DisplayName is not a string" << std::endl;
+        ok = false;
+        return "";
+    }
+
+    ok = true;
+    return std::string(displayNameStr);
+}
+
+std::string PlayerProvider::getLocalURL (json_t *item, bool &ok) {
+    if (!item) {
+        std::cout << "Item is null" << std::endl;
+        ok = false;
+        return "";
+    }
+
+    json_t *resources = json_object_get (item, "Resources");
+    if (!resources) {
+        std::cout << "Key 'Resources' not found" << std::endl;
+        ok = false;
+        return "";
+    }
+
+    for (int i = 0; i < json_array_size (resources); i++) {
+        json_t *url = json_object_get (json_array_get(resources, i), "URL");
+        if (!url) {
+            std::cout << "Unable to find URL property in Resource" << std::endl;
+            ok = false;
+            return "";
+        }
+
+        const char *urlStr = json_string_value(url);
+        if (!urlStr) {
+            std::cout << "URL is not a string" << std::endl;
+            ok = false;
+            return "";
+        }
+        if (g_str_has_prefix (urlStr, "file://")) {
+            std::cout << "Found local URL: " << urlStr << std::endl;
+            ok = true;
+            return urlStr;
+        }
+    }
+
+    ok = false;
+    return "";
+}
+
+void PlayerProvider::next(MmError **e) {
+    changePlayQueuePosition(1, e);
+}
+
+void PlayerProvider::previous(MmError **e) {
+    changePlayQueuePosition(-1, e);
+}
+
+void PlayerProvider::setRate (double rate, MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError                           *error = NULL;
+    dleynaRendererMediaPlayer2Player *mp    = NULL;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+        return;
+    dleyna_renderer_media_player2_player_set_rate (mp, rate);
+
+    checkError (error, e);
+}
+
+bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
+    GError                           *error = NULL;
+    dleynaRendererMediaPlayer2Player *mp    = NULL;
+
+    if (playqueue) {
+        json_t *currentItem = NULL;
+        int playQueueSize = json_array_size (playqueue);
+        bool ok;
+        std::string displayName, localURL;
+        int newPlayQueuePosition;
+
+        newPlayQueuePosition = playQueuePosition + increment;
+
+        if (playQueueSize < newPlayQueuePosition) {
+            std::cout << "Play queue is smaller than " << playQueuePosition << " elements" << std::endl;
+            return false;
+        }
+
+        if (newPlayQueuePosition < 0) {
+            std::cout << "Illegal play queue position: " << playQueuePosition << std::endl;
+            return false;
+        }
+
+        playQueuePosition = newPlayQueuePosition;
+
+        std::cout << "Playlist contains " << playQueueSize << " items" << std::endl;
+        currentItem = json_array_get(playqueue, playQueuePosition);
+
+        displayName = getDisplayName(currentItem, ok);
+        if (ok)
+            std::cout << "Current item is: " << displayName << std::endl;
+        else
+            std::cout << "Failed to get DisplayName for current item" << std::endl;
+
+        localURL = getLocalURL(currentItem, ok);
+        if (ok)
+            std::cout << "Local URL for item is: " << localURL << std::endl;
+        else
+            std::cout << "Failed to get localURL for current item" << std::endl;
+
+        openURI (localURL, e);
+        return true;
+
+    } else {
+        std::cout << "No play queue has been loaded";
+        return false;
+    }
+
+    return false;
 }

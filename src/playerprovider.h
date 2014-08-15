@@ -25,23 +25,43 @@
 #include "common.h"
 #include "serviceprovider.h"
 #include "dleyna-renderer-generated.h"
+#include "dleyna-generated.h"
 
 class PlayerProvider : public ServiceProvider {
 
 public:
-    PlayerProvider() : ServiceProvider("com.intel.dleyna-renderer") {}
+    PlayerProvider() :
+        ServiceProvider("com.intel.dleyna-renderer"),
+        playQueuePosition(0) 
+        {}
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);
     void pause(MmError **e);
     void play(MmError **e);
     void playPause(MmError **e);
+    void openPlaylist (std::string, MmError **e);
+    void next (MmError **e);
+    void previous (MmError **e);
+    void setRate (double rate, MmError **e);
 
 private:
+int playQueuePosition;
+
 bool connectMediaPlayer (const std::string path,
                          dleynaRendererMediaPlayer2Player **mc,
                          MmError **e);
+
+bool connectMediaContainer(const std::string path,
+                           dleynaServerMediaContainer2 **mc,
+                           MmError **e);
+
 char *findFirstPlayer(MmError **e);
 
+json_t *playqueue;
+bool changePlayQueuePosition (int increment, MmError **e);
+
+std::string getDisplayName (json_t *item, bool &ok);
+std::string getLocalURL (json_t *item, bool &ok);
 };
 
 #endif /* PLAYERPROVIDER_H */

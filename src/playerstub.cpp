@@ -17,6 +17,7 @@ namespace MM = org::genivi::MediaManager;
 
 PlayerStubImpl::PlayerStubImpl (PlayerProvider *player) {
     m_player = player;
+    m_player->stub = this;
 }
 
 void PlayerStubImpl::next(MM::Player::PlayerError& e) {
@@ -41,7 +42,6 @@ void PlayerStubImpl::openUri(std::string uri, MM::Player::PlayerError& e) {
 
 void PlayerStubImpl::openPlaylist(std::string uri, MM::Player::PlayerError& e){
     MmError *error = new MmError("");
-    m_player->stub = this;
     m_player->openPlaylist(uri, &error);
 
     if (error) {
@@ -96,64 +96,4 @@ void PlayerStubImpl::seek(int64_t pos, MM::Player::PlayerError& e){
 
 void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
     std::cout << __FUNCTION__ << " is not implemented" << std::endl;
-}
-
-const MM::Player::MuteStatus& PlayerStubImpl::getMuteAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId) {
-    std::cout << "In " << __FUNCTION__ << std::endl;
-    return MM::Player::MuteStatus::MUTED;
-}
-
-const MM::Player::PlaybackStatus& PlayerStubImpl::getPlaybackStatusAttribute() {
-    std::cout << "In " << __FUNCTION__ << std::endl;
-    if (m_player->isPlaying)
-        return MM::Player::PlaybackStatus::PLAYING;
-    else
-        return MM::Player::PlaybackStatus::PAUSED;
-}
-
-bool PlayerStubImpl::trySetRateAttribute(MM::Player::RateStatus value) {
-    std::cout << "In " << __FUNCTION__ << std::endl;
-    MmError *error = NULL;
-    double rate = 1;
-
-    switch (value) {
-        case MM::Player::RateStatus::RATE_1:
-            rate = 1;
-            break;
-        case MM::Player::RateStatus::RATE_2:
-            rate = 2;
-            break;
-        case MM::Player::RateStatus::RATE_4:
-            rate = 4;
-            break;
-        case MM::Player::RateStatus::RATE_8:
-            rate = 8;
-            break;
-        case MM::Player::RateStatus::RATE_16:
-            rate = 16;
-            break;
-        default:
-            std::cout << "Failed to set rate" << std::endl;
-            return false;
-    }
-    m_player->setRate(rate, &error);
-    return true;
-}
-
-bool PlayerStubImpl::trySetPlaybackStatusAttribute(MM::Player::PlaybackStatus value) {
-    std::cout << "Requested to set playback state" << std::endl;
-
-    switch (value) {
-        case MM::Player::PlaybackStatus::PLAYING:
-            m_player->isPlaying = true;
-            break;
-        case MM::Player::PlaybackStatus::PAUSED:
-            m_player->isPlaying = false;
-            break;
-        default:
-            std::cout << "Unhandled playback status!";
-            return false;
-    }
-
-    return true;
 }

@@ -37,15 +37,6 @@ public:
     virtual void seek(int64_t pos, MM::Player::PlayerError& e);
     virtual void setPosition(uint64_t pos, MM::Player::PlayerError& e);
 
-    /* Getters */
-    virtual const MM::Player::MuteStatus& getMuteAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
-    virtual const MM::Player::PlaybackStatus& getPlaybackStatusAttribute();
-
-    /* Setters */
-    bool trySetRateAttribute(MM::Player::RateStatus value);
-    bool trySetPlaybackStatusAttribute(MM::Player::PlaybackStatus value);
-
-
 private:
     PlayerProvider *m_player;
 };

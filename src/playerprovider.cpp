@@ -248,14 +248,15 @@ void PlayerProvider::handlePropertyChangedSignal (std::string key, GVariant *val
         std::cout << "Key: " << key << std::endl;
         std::cout << "Value: " << g_variant_get_string (value, NULL) << std::endl;
         if (this->stub) {
-            if (g_strcmp0(g_variant_get_string(value,NULL), "Playing"))
+            if (g_strcmp0(g_variant_get_string(value,NULL), "Playing") == 0) {
                 this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PLAYING);
+            }
             else
                 this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PAUSED);
 
         }
         else {
-            std::cout << "No stub" << std::endl;
+            std::cout << "Can't send notification: No stub" << std::endl;
         }
     } else {
         std::cout << "Unhandled key: " << key << std::endl;

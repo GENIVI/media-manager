@@ -37,7 +37,9 @@ public:
         playQueuePosition(0),
         stub(0),
         mp(0),
-        mc(0)
+        mc(0),
+        playqueue(0),
+        isPlaying(0)
         {}
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);

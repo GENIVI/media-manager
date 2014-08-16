@@ -35,7 +35,8 @@ public:
     PlayerProvider() :
         ServiceProvider("com.intel.dleyna-renderer"),
         playQueuePosition(0),
-        stub(0)
+        stub(0),
+        mp(0)
         {}
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);
@@ -50,6 +51,7 @@ public:
     void handlePropertyChangedSignal (std::string, GVariant *);
     org::genivi::MediaManager::PlayerStubDefault *stub;
 private:
+dleynaRendererMediaPlayer2Player *mp;
 int playQueuePosition;
 json_t *playqueue;
 bool isPlaying;

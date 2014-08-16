@@ -88,9 +88,8 @@ void PlayerProvider::openURI(std::string uri,
                              MmError **e)
 {
     GError                           *error  = NULL;
-    dleynaRendererMediaPlayer2Player *mp     = NULL;
 
-    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_open_uri_sync (mp,
                                                              uri.c_str(),
@@ -102,9 +101,8 @@ void PlayerProvider::openURI(std::string uri,
 
 void PlayerProvider::pause(MmError **e) {
     GError                           *error = NULL;
-    dleynaRendererMediaPlayer2Player *mp    = NULL;
 
-    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_pause_sync (mp,
                                                              NULL,
@@ -115,9 +113,8 @@ void PlayerProvider::pause(MmError **e) {
 
 void PlayerProvider::play(MmError **e) {
     GError                           *error = NULL;
-    dleynaRendererMediaPlayer2Player *mp    = NULL;
 
-    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_play_sync (mp,
                                                          NULL,
@@ -128,9 +125,8 @@ void PlayerProvider::play(MmError **e) {
 
 void PlayerProvider::playPause(MmError **e) {
     GError                           *error = NULL;
-    dleynaRendererMediaPlayer2Player *mp    = NULL;
 
-    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_play_pause_sync (mp,
                                                                NULL,
@@ -152,7 +148,7 @@ void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
     int count = 100;
     gchar **filterStrv = stdStrvToStrv(filter);
 
-    if (!PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
+    if (!mp && !PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
         return;
 
     dleyna_server_media_container2_call_list_items_sync (mc, offset, count,
@@ -398,7 +394,7 @@ void PlayerProvider::setRate (double rate, MmError **e) {
     GError                           *error = NULL;
     dleynaRendererMediaPlayer2Player *mp    = NULL;
 
-    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_set_rate (mp, rate);
 

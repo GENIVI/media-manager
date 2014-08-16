@@ -1,8 +1,12 @@
 #include "common.h"
 
 json_t * DLNADictToJSON (GVariant *element) {
+    if (!element) {
+        std::cout << "Element is null" << std::endl;
+        return NULL;
+    }
     const GVariantType *elementType = g_variant_get_type (element);
-     if (g_variant_type_is_subtype_of (elementType, G_VARIANT_TYPE_DICTIONARY)) {
+    if (g_variant_type_is_subtype_of (elementType, G_VARIANT_TYPE_DICTIONARY)) {
         GVariant     *key   = NULL, *value = NULL, *child = NULL;
         json_t       *obj   = json_object();
         GVariantIter  iter;

@@ -138,7 +138,6 @@ void PlayerProvider::playPause(MmError **e) {
 void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                           *error = NULL;
-    dleynaServerMediaContainer2      *mc    = NULL;
     GVariant *out = NULL;
 
     std::vector<std::string> filter;
@@ -148,12 +147,17 @@ void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
     int count = 100;
     gchar **filterStrv = stdStrvToStrv(filter);
 
-    if (!mp && !PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
+    if (!mc && !PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
         return;
 
     dleyna_server_media_container2_call_list_items_sync (mc, offset, count,
                                                   filterStrv, &out, NULL,
                                                   &error);
+
+    if (error) {
+        std::cout << "Unable to open playlist: " << error->message << std::endl;
+        return;
+    }
 
     std::string containers;
     std::cout << "Setting play queue to: " << playlistPath << std::endl;

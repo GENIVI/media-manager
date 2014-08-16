@@ -39,9 +39,11 @@ public:
 
     /* Getters */
     virtual const MM::Player::MuteStatus& getMuteAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
+    virtual const MM::Player::PlaybackStatus& getPlaybackStatusAttribute();
 
     /* Setters */
     bool trySetRateAttribute(MM::Player::RateStatus value);
+    bool trySetPlaybackStatusAttribute(MM::Player::PlaybackStatus value);
 
 
 private:

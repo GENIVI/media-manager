@@ -41,6 +41,7 @@ void PlayerStubImpl::openUri(std::string uri, MM::Player::PlayerError& e) {
 
 void PlayerStubImpl::openPlaylist(std::string uri, MM::Player::PlayerError& e){
     MmError *error = new MmError("");
+    m_player->stub = this;
     m_player->openPlaylist(uri, &error);
 
     if (error) {
@@ -102,25 +103,33 @@ const MM::Player::MuteStatus& PlayerStubImpl::getMuteAttribute(const std::shared
     return MM::Player::MuteStatus::MUTED;
 }
 
+const MM::Player::PlaybackStatus& PlayerStubImpl::getPlaybackStatusAttribute() {
+    std::cout << "In " << __FUNCTION__ << std::endl;
+    if (m_player->isPlaying)
+        return MM::Player::PlaybackStatus::PLAYING;
+    else
+        return MM::Player::PlaybackStatus::PAUSED;
+}
+
 bool PlayerStubImpl::trySetRateAttribute(MM::Player::RateStatus value) {
     std::cout << "In " << __FUNCTION__ << std::endl;
     MmError *error = NULL;
     double rate = 1;
 
     switch (value) {
-        case RATE_1:
+        case MM::Player::RateStatus::RATE_1:
             rate = 1;
             break;
-        case RATE_2:
+        case MM::Player::RateStatus::RATE_2:
             rate = 2;
             break;
-        case RATE_4:
+        case MM::Player::RateStatus::RATE_4:
             rate = 4;
             break;
-        case RATE_8:
+        case MM::Player::RateStatus::RATE_8:
             rate = 8;
             break;
-        case RATE_16:
+        case MM::Player::RateStatus::RATE_16:
             rate = 16;
             break;
         default:
@@ -128,5 +137,23 @@ bool PlayerStubImpl::trySetRateAttribute(MM::Player::RateStatus value) {
             return false;
     }
     m_player->setRate(rate, &error);
+    return true;
+}
+
+bool PlayerStubImpl::trySetPlaybackStatusAttribute(MM::Player::PlaybackStatus value) {
+    std::cout << "Requested to set playback state" << std::endl;
+
+    switch (value) {
+        case MM::Player::PlaybackStatus::PLAYING:
+            m_player->isPlaying = true;
+            break;
+        case MM::Player::PlaybackStatus::PAUSED:
+            m_player->isPlaying = false;
+            break;
+        default:
+            std::cout << "Unhandled playback status!";
+            return false;
+    }
+
     return true;
 }

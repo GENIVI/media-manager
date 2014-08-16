@@ -26,13 +26,16 @@
 #include "serviceprovider.h"
 #include "dleyna-renderer-generated.h"
 #include "dleyna-generated.h"
+#include "../src-gen/org/genivi/MediaManager/PlayerStubDefault.h"
 
 class PlayerProvider : public ServiceProvider {
+friend class PlayerStubImpl;
 
 public:
     PlayerProvider() :
         ServiceProvider("com.intel.dleyna-renderer"),
-        playQueuePosition(0) 
+        playQueuePosition(0),
+        stub(0)
         {}
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);
@@ -44,8 +47,14 @@ public:
     void previous (MmError **e);
     void setRate (double rate, MmError **e);
 
+    void handlePropertyChangedSignal (std::string, GVariant *);
+    org::genivi::MediaManager::PlayerStubDefault *stub;
 private:
 int playQueuePosition;
+json_t *playqueue;
+bool isPlaying;
+
+bool registerSignalListener(std::string);
 
 bool connectMediaPlayer (const std::string path,
                          dleynaRendererMediaPlayer2Player **mc,
@@ -57,7 +66,6 @@ bool connectMediaContainer(const std::string path,
 
 char *findFirstPlayer(MmError **e);
 
-json_t *playqueue;
 bool changePlayQueuePosition (int increment, MmError **e);
 
 std::string getDisplayName (json_t *item, bool &ok);

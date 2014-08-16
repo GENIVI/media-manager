@@ -203,6 +203,89 @@ bool PlayerProvider::connectMediaPlayer (const std::string path,
         return false;
     }
 
+    if (!registerSignalListener(foundpath)) {
+        std::cout << "Failed to set up signal listener";
+        return false;
+    }
+
+    return true;
+}
+
+void playerprovider_dbus_properties_changed_cb (GDBusConnection *connection,
+                                                const gchar *sender_name,
+                                                const gchar *object_path,
+                                                const gchar *interface_name,
+                                                const gchar *signal_name,
+                                                GVariant *parameters,
+                                                gpointer user_data) {
+    PlayerProvider *_this = ((PlayerProvider *) user_data);
+    GVariantIter iter;
+    GVariant *child;
+
+    std::cout << "Caught signal: " << signal_name << std::endl;
+    GVariant *inner = g_variant_get_child_value(parameters, 1);
+
+    g_variant_iter_init (&iter, inner);
+    while ((child = g_variant_iter_next_value (&iter)))
+      {
+        if (g_variant_is_of_type(child, G_VARIANT_TYPE_STRING)) {
+        } if (g_variant_is_of_type (child, G_VARIANT_TYPE_DICT_ENTRY)) {
+            GVariant *key = g_variant_get_child_value(child, 0);
+            GVariant *value = g_variant_get_variant(g_variant_get_child_value(child, 1));
+            std::string keyStr = std::string(g_variant_get_string (key, NULL));
+            _this->handlePropertyChangedSignal (keyStr, value);
+
+            g_variant_unref (key);
+            g_variant_unref (value);
+        }
+
+        g_variant_unref (child);
+      }
+}
+
+void PlayerProvider::handlePropertyChangedSignal (std::string key, GVariant *value) {
+    if (key == "PlaybackStatus") {
+        std::cout << "Key: " << key << std::endl;
+        std::cout << "Value: " << g_variant_get_string (value, NULL) << std::endl;
+        if (this->stub) {
+            if (g_strcmp0(g_variant_get_string(value,NULL), "Playing"))
+                this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PLAYING);
+            else
+                this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PAUSED);
+
+        }
+        else {
+            std::cout << "No stub" << std::endl;
+        }
+    } else {
+        std::cout << "Unhandled key: " << key << std::endl;
+    }
+}
+
+bool PlayerProvider::registerSignalListener(std::string objectPath) {
+    GError *error = NULL;
+
+    GDBusConnection *connection = g_bus_get_sync (
+        G_BUS_TYPE_SESSION,
+        NULL,
+        &error);
+
+    if (error) {
+        std::cout << "Failed to set up connection for signal listener:" << error->message <<std::endl;
+        return false;
+    }
+
+    g_dbus_connection_signal_subscribe (connection,
+                                        NULL,
+                                        "org.freedesktop.DBus.Properties",
+                                        "PropertiesChanged",
+                                        objectPath.c_str(),
+                                        NULL,
+                                        G_DBUS_SIGNAL_FLAGS_NONE,
+                                        playerprovider_dbus_properties_changed_cb,
+                                        this,
+                                        NULL);
+
     return true;
 }
 

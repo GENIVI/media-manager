@@ -108,7 +108,10 @@ void PlayerProvider::pause(MmError **e) {
                                                              NULL,
                                                              &error);
 
-    checkError (error, e);
+    // dLeyna says we failed to pause, but PAUSED to the client anyway
+    if (!checkError (error, e)) {
+        this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PAUSED);
+    }
 }
 
 void PlayerProvider::play(MmError **e) {
@@ -395,7 +398,9 @@ std::string PlayerProvider::getLocalURL (json_t *item, bool &ok) {
 }
 
 void PlayerProvider::next(MmError **e) {
-    changePlayQueuePosition(1, e);
+    if (!changePlayQueuePosition(1, e)) {
+        pause(e);
+    }
 }
 
 void PlayerProvider::previous(MmError **e) {

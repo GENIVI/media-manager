@@ -37,6 +37,9 @@ public:
     virtual void seek(int64_t pos, MM::Player::PlayerError& e);
     virtual void setPosition(uint64_t pos, MM::Player::PlayerError& e);
 
+    virtual void onRemoteRateAttributeChanged();
+    virtual void onRemoteRepeatAttributeChanged();
+
 private:
     PlayerProvider *m_player;
 };

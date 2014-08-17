@@ -40,7 +40,8 @@ public:
         mc(0),
         playqueue(0),
         isPlaying(0),
-        m_signalHandlerId(0)
+        m_signalHandlerId(0),
+        m_repeat(0)
         {}
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);
@@ -51,6 +52,7 @@ public:
     void next (MmError **e);
     void previous (MmError **e);
     void setRate (double rate, MmError **e);
+    void setRepeat (bool);
 
     void handlePropertyChangedSignal (std::string, GVariant *);
     org::genivi::MediaManager::PlayerStubDefault *stub;
@@ -61,6 +63,7 @@ int playQueuePosition;
 json_t *playqueue;
 bool isPlaying;
 guint m_signalHandlerId;
+bool m_repeat;
 
 bool registerSignalListener(std::string);
 

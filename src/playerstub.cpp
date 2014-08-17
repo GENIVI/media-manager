@@ -97,3 +97,16 @@ void PlayerStubImpl::seek(int64_t pos, MM::Player::PlayerError& e){
 void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
     std::cout << __FUNCTION__ << " is not implemented" << std::endl;
 }
+
+void PlayerStubImpl::onRemoteRateAttributeChanged() {
+    std::cout << "Remote has updated Rate attribute" << std::endl;
+}
+
+void PlayerStubImpl::onRemoteRepeatAttributeChanged() {
+    std::cout << "Remote has updated repeat attribute" << std::endl;
+
+    if (getRepeatAttribute() == MM::Player::RepeatStatus::REPEAT)
+        m_player->setRepeat(true);
+    else
+        m_player->setRepeat(false);
+}

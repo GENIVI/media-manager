@@ -419,6 +419,11 @@ void PlayerProvider::setRate (double rate, MmError **e) {
     checkError (error, e);
 }
 
+void PlayerProvider::setRepeat (bool repeat) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    m_repeat = repeat;
+}
+
 bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
     GError                           *error = NULL;
     dleynaRendererMediaPlayer2Player *mp    = NULL;
@@ -434,7 +439,13 @@ bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
 
         if (playQueueSize < newPlayQueuePosition) {
             std::cout << "Play queue is smaller than " << playQueuePosition << " elements" << std::endl;
-            return false;
+            if (m_repeat && playQueueSize >= 0) {
+                std::cout << "Repeat is enabled, resetting play queue position to 0" << std::endl;
+                newPlayQueuePosition = 0;
+            } else {
+                std::cout << "Repeat disabled. Pausiong playback" << std::endl;
+                return false;
+            }
         }
 
         if (newPlayQueuePosition < 0) {

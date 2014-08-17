@@ -425,7 +425,7 @@ bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
 
     if (playqueue) {
         json_t *currentItem = NULL;
-        int playQueueSize = json_array_size (playqueue);
+        int playQueueSize = json_array_size (playqueue) - 1;
         bool ok;
         std::string displayName, localURL;
         int newPlayQueuePosition;
@@ -443,6 +443,9 @@ bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
         }
 
         playQueuePosition = newPlayQueuePosition;
+
+        this->stub->setCanGoNextAttribute(playQueueSize >= newPlayQueuePosition + 1);
+        this->stub->setCanGoPreviousAttribute(newPlayQueuePosition - 1 >= 0);
 
         std::cout << "Playlist contains " << playQueueSize << " items" << std::endl;
         currentItem = json_array_get(playqueue, playQueuePosition);

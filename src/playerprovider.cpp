@@ -398,7 +398,14 @@ std::string PlayerProvider::getLocalURL (json_t *item, bool &ok) {
 }
 
 void PlayerProvider::next(MmError **e) {
-    if (!changePlayQueuePosition(1, e)) {
+    uint newPosition = 0;
+
+    if (m_shuffle) {
+        int playQueueSize = json_array_size (playqueue) - 1;
+        newPosition = g_random_int_range (-playQueuePosition, playQueueSize - playQueuePosition);
+    }
+
+    if (!changePlayQueuePosition(newPosition, e)) {
         pause(e);
     }
 }
@@ -422,6 +429,11 @@ void PlayerProvider::setRate (double rate, MmError **e) {
 void PlayerProvider::setRepeat (bool repeat) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     m_repeat = repeat;
+}
+
+void PlayerProvider::setShuffle (bool repeat) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    m_shuffle = repeat;
 }
 
 bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {

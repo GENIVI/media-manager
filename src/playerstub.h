@@ -39,6 +39,7 @@ public:
 
     virtual void onRemoteRateAttributeChanged();
     virtual void onRemoteRepeatAttributeChanged();
+    virtual void onRemoteShuffleAttributeChanged();
 
 private:
     PlayerProvider *m_player;

@@ -398,7 +398,7 @@ std::string PlayerProvider::getLocalURL (json_t *item, bool &ok) {
 }
 
 void PlayerProvider::next(MmError **e) {
-    uint newPosition = 0;
+    uint newPosition = 1;
 
     if (m_shuffle) {
         int playQueueSize = json_array_size (playqueue) - 1;

@@ -89,7 +89,7 @@ void PlayerProvider::openURI(std::string uri,
 {
     GError                           *error  = NULL;
 
-    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_open_uri_sync (mp,
                                                              uri.c_str(),
@@ -102,7 +102,7 @@ void PlayerProvider::openURI(std::string uri,
 void PlayerProvider::pause(MmError **e) {
     GError                           *error = NULL;
 
-    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_pause_sync (mp,
                                                              NULL,
@@ -114,7 +114,7 @@ void PlayerProvider::pause(MmError **e) {
 void PlayerProvider::play(MmError **e) {
     GError                           *error = NULL;
 
-    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_play_sync (mp,
                                                          NULL,
@@ -126,7 +126,7 @@ void PlayerProvider::play(MmError **e) {
 void PlayerProvider::playPause(MmError **e) {
     GError                           *error = NULL;
 
-    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_call_play_pause_sync (mp,
                                                                NULL,
@@ -147,7 +147,7 @@ void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
     int count = 100;
     gchar **filterStrv = stdStrvToStrv(filter);
 
-    if (!mc && !PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
+    if (!PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
         return;
 
     dleyna_server_media_container2_call_list_items_sync (mc, offset, count,
@@ -162,6 +162,7 @@ void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
     std::string containers;
     std::cout << "Setting play queue to: " << playlistPath << std::endl;
 
+    json_decref (playqueue);
     playqueue = DLNADictToJSON (out);
 
     playQueuePosition = 0;
@@ -276,16 +277,18 @@ bool PlayerProvider::registerSignalListener(std::string objectPath) {
         return false;
     }
 
-    g_dbus_connection_signal_subscribe (connection,
-                                        NULL,
-                                        "org.freedesktop.DBus.Properties",
-                                        "PropertiesChanged",
-                                        objectPath.c_str(),
-                                        NULL,
-                                        G_DBUS_SIGNAL_FLAGS_NONE,
-                                        playerprovider_dbus_properties_changed_cb,
-                                        this,
-                                        NULL);
+    if (!m_signalHandlerId) {
+        m_signalHandlerId = g_dbus_connection_signal_subscribe (connection,
+                                    NULL,
+                                    "org.freedesktop.DBus.Properties",
+                                    "PropertiesChanged",
+                                    NULL,
+                                    NULL,
+                                    G_DBUS_SIGNAL_FLAGS_NONE,
+                                    playerprovider_dbus_properties_changed_cb,
+                                    this,
+                                    NULL);
+    }
 
     return true;
 }

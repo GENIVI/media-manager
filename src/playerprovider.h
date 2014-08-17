@@ -39,7 +39,8 @@ public:
         mp(0),
         mc(0),
         playqueue(0),
-        isPlaying(0)
+        isPlaying(0),
+        m_signalHandlerId(0)
         {}
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);
@@ -59,6 +60,7 @@ dleynaServerMediaContainer2      *mc;
 int playQueuePosition;
 json_t *playqueue;
 bool isPlaying;
+guint m_signalHandlerId;
 
 bool registerSignalListener(std::string);
 

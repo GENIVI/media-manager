@@ -245,20 +245,25 @@ void playerprovider_dbus_properties_changed_cb (GDBusConnection *connection,
 }
 
 void PlayerProvider::handlePropertyChangedSignal (std::string key, GVariant *value) {
+    if (!this->stub) {
+            std::cout << "Can't send notification: No stub" << std::endl;
+    }
+
     if (key == "PlaybackStatus") {
         std::cout << "Key: " << key << std::endl;
         std::cout << "Value: " << g_variant_get_string (value, NULL) << std::endl;
-        if (this->stub) {
-            if (g_strcmp0(g_variant_get_string(value,NULL), "Playing") == 0) {
-                this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PLAYING);
-            }
-            else
-                this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PAUSED);
-
+        if (g_strcmp0(g_variant_get_string(value,NULL), "Playing") == 0)
+            this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PLAYING);
+        else if (g_strcmp0(g_variant_get_string(value,NULL), "Paused") == 0)
+            this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PAUSED);
+        else if (g_strcmp0(g_variant_get_string(value,NULL), "Stopped") == 0) {
+            next(NULL);
+        } else {
+            std::cout << "Unhandled playback state" << std::endl;
         }
-        else {
-            std::cout << "Can't send notification: No stub" << std::endl;
-        }
+    } else if (key == "Metadata") {
+        std::cout << "Key: " << key << std::endl;
+        this->stub->setCurrentTrackAttribute(playQueuePosition);
     } else {
         std::cout << "Unhandled key: " << key << std::endl;
     }
@@ -279,7 +284,7 @@ bool PlayerProvider::registerSignalListener(std::string objectPath) {
 
     if (!m_signalHandlerId) {
         m_signalHandlerId = g_dbus_connection_signal_subscribe (connection,
-                                    NULL,
+                                    "com.intel.dleyna-renderer",
                                     "org.freedesktop.DBus.Properties",
                                     "PropertiesChanged",
                                     NULL,

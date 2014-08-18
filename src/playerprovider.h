@@ -55,6 +55,8 @@ public:
     void setRate (double rate, MmError **e);
     void setRepeat (bool);
     void setShuffle (bool);
+    void stop (MmError **e);
+    void setPosition (uint64_t pos, MmError **e);
 
     void handlePropertyChangedSignal (std::string, GVariant *);
     org::genivi::MediaManager::PlayerStubDefault *stub;

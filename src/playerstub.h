@@ -36,6 +36,7 @@ public:
     virtual void previous(MM::Player::PlayerError& e);
     virtual void seek(int64_t pos, MM::Player::PlayerError& e);
     virtual void setPosition(uint64_t pos, MM::Player::PlayerError& e);
+    virtual void stop(MM::Player::PlayerError& e);
 
     virtual void onRemoteRateAttributeChanged();
     virtual void onRemoteRepeatAttributeChanged();

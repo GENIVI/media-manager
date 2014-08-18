@@ -417,9 +417,8 @@ void PlayerProvider::previous(MmError **e) {
 void PlayerProvider::setRate (double rate, MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                           *error = NULL;
-    dleynaRendererMediaPlayer2Player *mp    = NULL;
 
-    if (!mp && !PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
     dleyna_renderer_media_player2_player_set_rate (mp, rate);
 
@@ -434,6 +433,27 @@ void PlayerProvider::setRepeat (bool repeat) {
 void PlayerProvider::setShuffle (bool repeat) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     m_shuffle = repeat;
+}
+
+void PlayerProvider::stop (MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    pause(e);
+    setPosition(0, e);
+}
+
+void PlayerProvider::setPosition (uint64_t pos, MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError                           *error = NULL;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+        return;
+    dleyna_renderer_media_player2_player_call_set_position_sync (mp,
+                                                                 "1",
+                                                                 pos,
+                                                                 NULL,
+                                                                 &error);
+
+    checkError (error, e);
 }
 
 bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {

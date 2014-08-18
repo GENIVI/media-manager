@@ -98,6 +98,16 @@ void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
     std::cout << __FUNCTION__ << " is not implemented" << std::endl;
 }
 
+void PlayerStubImpl::stop(MM::Player::PlayerError& e){
+    MmError *error = NULL;
+    m_player->stop(&error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
+}
+
 void PlayerStubImpl::onRemoteRateAttributeChanged() {
     std::cout << "Remote has updated Rate attribute" << std::endl;
 }

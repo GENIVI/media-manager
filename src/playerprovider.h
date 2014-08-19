@@ -57,6 +57,8 @@ public:
     void setShuffle (bool);
     void stop (MmError **e);
     void setPosition (uint64_t pos, MmError **e);
+    uint64_t getPosition (MmError **e);
+    void seek (uint64_t pos, MmError **e);
 
     void handlePropertyChangedSignal (std::string, GVariant *);
     org::genivi::MediaManager::PlayerStubDefault *stub;

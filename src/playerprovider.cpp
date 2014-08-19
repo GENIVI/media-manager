@@ -438,7 +438,21 @@ void PlayerProvider::setShuffle (bool repeat) {
 void PlayerProvider::stop (MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     pause(e);
-    setPosition(0, e);
+    seek(0, e);
+}
+
+void PlayerProvider::seek (uint64_t pos, MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError                           *error = NULL;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+        return;
+    dleyna_renderer_media_player2_player_call_seek_sync (mp,
+                                                         pos,
+                                                         NULL,
+                                                         &error);
+
+    checkError (error, e);
 }
 
 void PlayerProvider::setPosition (uint64_t pos, MmError **e) {
@@ -447,13 +461,26 @@ void PlayerProvider::setPosition (uint64_t pos, MmError **e) {
 
     if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;
-    dleyna_renderer_media_player2_player_call_set_position_sync (mp,
-                                                                 "1",
-                                                                 pos,
-                                                                 NULL,
-                                                                 &error);
+    gint64 currentPosition = dleyna_renderer_media_player2_player_get_position (mp);
+
+    seek (pos - currentPosition, e);
 
     checkError (error, e);
+}
+
+uint64_t PlayerProvider::getPosition (MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError                           *error = NULL;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+        return 0;
+    gint64 currentPosition = dleyna_renderer_media_player2_player_get_position (mp);
+
+    checkError (error, e);
+
+    if (currentPosition >= 0)
+        return currentPosition;
+    return 0;
 }
 
 bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {

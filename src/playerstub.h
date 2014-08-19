@@ -38,12 +38,15 @@ public:
     virtual void setPosition(uint64_t pos, MM::Player::PlayerError& e);
     virtual void stop(MM::Player::PlayerError& e);
 
+    const uint64_t& getPositionAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
+
     virtual void onRemoteRateAttributeChanged();
     virtual void onRemoteRepeatAttributeChanged();
     virtual void onRemoteShuffleAttributeChanged();
 
 private:
     PlayerProvider *m_player;
+    uint64_t pos;
 };
 
 #endif /* PLAYERSTUB_H */

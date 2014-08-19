@@ -91,11 +91,23 @@ void PlayerStubImpl::previous(MM::Player::PlayerError& e){
 }
 
 void PlayerStubImpl::seek(int64_t pos, MM::Player::PlayerError& e){
-    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+    MmError *error = NULL;
+    m_player->seek(pos, &error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
 }
 
 void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
-    std::cout << __FUNCTION__ << " is not implemented" << std::endl;
+    MmError *error = NULL;
+    m_player->setPosition(pos, &error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
 }
 
 void PlayerStubImpl::stop(MM::Player::PlayerError& e){
@@ -108,8 +120,35 @@ void PlayerStubImpl::stop(MM::Player::PlayerError& e){
     }
 }
 
+const uint64_t& PlayerStubImpl::getPositionAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId) {
+    pos = m_player->getPosition(NULL);
+    return pos;
+}
+
 void PlayerStubImpl::onRemoteRateAttributeChanged() {
     std::cout << "Remote has updated Rate attribute" << std::endl;
+    MM::Player::RateStatus rate = getRateAttribute();
+    uint rateInt = 1;
+
+    switch (rate) {
+        case MM::Player::RateStatus::RATE_1:
+            rateInt = 1;
+            break;
+        case MM::Player::RateStatus::RATE_2:
+            rateInt = 2;
+            break;
+        case MM::Player::RateStatus::RATE_4:
+            rateInt = 4;
+            break;
+        case MM::Player::RateStatus::RATE_8:
+            rateInt = 8;
+            break;
+        case MM::Player::RateStatus::RATE_16:
+            rateInt = 16;
+            break;
+    }
+
+    m_player->setRate (rateInt, NULL);
 }
 
 void PlayerStubImpl::onRemoteRepeatAttributeChanged() {

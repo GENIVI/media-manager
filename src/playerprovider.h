@@ -59,12 +59,16 @@ public:
     void setPosition (uint64_t pos, MmError **e);
     uint64_t getPosition (MmError **e);
     void seek (uint64_t pos, MmError **e);
+    void enqueueUri (std::string uri, MmError **e);
+    void dequeueIndex (uint64_t idx, MmError **e);
+    void getCurrentPlayQueue (std::string &queue, MmError **e);
 
     void handlePropertyChangedSignal (std::string, GVariant *);
     org::genivi::MediaManager::PlayerStubDefault *stub;
 private:
 dleynaRendererMediaPlayer2Player *mp;
 dleynaServerMediaContainer2      *mc;
+dleynaServerMediaObject2         *mo;
 int playQueuePosition;
 json_t *playqueue;
 bool isPlaying;
@@ -81,6 +85,9 @@ bool connectMediaPlayer (const std::string path,
 bool connectMediaContainer(const std::string path,
                            dleynaServerMediaContainer2 **mc,
                            MmError **e);
+bool connectMediaObject (const std::string path,
+                         dleynaServerMediaObject2 **mc,
+                         MmError **e);
 
 char *findFirstPlayer(MmError **e);
 

@@ -38,6 +38,10 @@ public:
     virtual void setPosition(uint64_t pos, MM::Player::PlayerError& e);
     virtual void stop(MM::Player::PlayerError& e);
 
+    virtual void enqueueUri(std::string uri, MM::Player::PlayerError& e);
+    virtual void dequeueIndex(uint64_t pos, MM::Player::PlayerError& e);
+    virtual void getCurrentPlayQueue(std::string& playQueue, MM::Player::PlayerError& e);
+
     const uint64_t& getPositionAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
 
     virtual void onRemoteRateAttributeChanged();

@@ -120,6 +120,37 @@ void PlayerStubImpl::stop(MM::Player::PlayerError& e){
     }
 }
 
+void PlayerStubImpl::enqueueUri(std::string uri, MM::Player::PlayerError& e) {
+    MmError *error = NULL;
+    m_player->enqueueUri (uri, &error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
+}
+
+void PlayerStubImpl::dequeueIndex(uint64_t pos, MM::Player::PlayerError& e) {
+    MmError *error = NULL;
+    m_player->dequeueIndex (pos, &error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
+}
+
+void PlayerStubImpl::getCurrentPlayQueue(std::string& playQueue, MM::Player::PlayerError& e) {
+    MmError *error = NULL;
+    std::string queue;
+    m_player->getCurrentPlayQueue (playQueue, &error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
+}
+
 const uint64_t& PlayerStubImpl::getPositionAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId) {
     pos = m_player->getPosition(NULL);
     return pos;

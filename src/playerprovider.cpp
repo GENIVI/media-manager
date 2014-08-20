@@ -333,6 +333,37 @@ bool PlayerProvider::connectMediaContainer (const std::string path,
     return true;
 }
 
+bool PlayerProvider::connectMediaObject (const std::string path,
+                                             dleynaServerMediaObject2 **mo,
+                                             MmError **e) {
+    GError *error = NULL;
+
+    if (!g_variant_is_object_path (path.c_str())) {
+        std::string error = "Path is invalid";
+        std::cout << error << std::endl;
+        if (e)
+            (*e)->message = error;
+        return false;
+    }
+
+
+    *mo = dleyna_server_media_object2_proxy_new_for_bus_sync (
+                                    G_BUS_TYPE_SESSION,
+                                    G_DBUS_PROXY_FLAGS_NONE,
+                                    "com.intel.dleyna-server",
+                                    path.c_str(),
+                                    NULL,
+                                    &error);
+    if (error) {
+        std::cout << "Error creating MediaContainer2 proxy: " << error->message << std::endl;
+        if (e)
+            (*e)->message = error->message;
+        return false;
+    }
+
+    return true;
+}
+
 std::string PlayerProvider::getDisplayName (json_t *item, bool &ok) {
     if (!item) {
         std::cout << "Item is null" << std::endl;
@@ -481,6 +512,66 @@ uint64_t PlayerProvider::getPosition (MmError **e) {
     if (currentPosition >= 0)
         return currentPosition;
     return 0;
+}
+
+void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError                          *error = NULL;
+    std::vector<std::string>         filter;
+    GVariant                        *out    = NULL;
+
+    filter.push_back("*");
+
+    gchar **filterStrv = stdStrvToStrv(filter);
+
+    if (!PlayerProvider::connectMediaObject(uri, &mo, e))
+        return;
+    const char *parent = dleyna_server_media_object2_get_parent (mo);
+
+    std::cout << "Parent is: " << parent << std::endl;
+
+    if (!connectMediaContainer(parent, &mc, e))
+        return;
+
+    dleyna_server_media_container2_call_list_items_sync (mc, 0, 100,
+                                                         filterStrv, &out, NULL,
+                                                         &error);
+
+    std::cout << "Type: " << g_variant_get_type_string (out) << std::endl;
+
+
+    GVariantIter iter;
+    GVariant *child;
+
+    g_variant_iter_init (&iter, out);
+    while ((child = g_variant_iter_next_value (&iter)))
+      {
+        std::cout << "Child type:" << g_variant_get_type_string (child) << std::endl;
+        GVariant *ref = g_variant_lookup_value (child, "Path", G_VARIANT_TYPE_OBJECT_PATH);
+        if (ref) {
+            if (g_variant_get_string(ref, NULL) == uri) {
+                std::cout << "Found item";
+
+                json_t *js = DLNADictToJSON(child);
+                json_array_append(playqueue, js);
+            }
+        }
+        g_variant_unref (child);
+      }
+
+    std::cout << "Enf od loop" << std::endl;
+
+
+    checkError (error, e);
+}
+
+void PlayerProvider::dequeueIndex (uint64_t idx, MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+}
+
+void PlayerProvider::getCurrentPlayQueue (std::string &queue, MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    DLNAStringify(playqueue,queue,NULL);
 }
 
 bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {

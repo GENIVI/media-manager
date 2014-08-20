@@ -128,9 +128,24 @@ const uint64_t& PlayerStubImpl::getPositionAttribute(const std::shared_ptr<Commo
 void PlayerStubImpl::onRemoteRateAttributeChanged() {
     std::cout << "Remote has updated Rate attribute" << std::endl;
     MM::Player::RateStatus rate = getRateAttribute();
-    uint rateInt = 1;
+    int rateInt = 1;
 
     switch (rate) {
+        case MM::Player::RateStatus::RATE_NEG_16:
+            rateInt = -16;
+            break;
+        case MM::Player::RateStatus::RATE_NEG_8:
+            rateInt = -8;
+            break;
+        case MM::Player::RateStatus::RATE_NEG_4:
+            rateInt = -4;
+            break;
+        case MM::Player::RateStatus::RATE_NEG_2:
+            rateInt = -2;
+            break;
+        case MM::Player::RateStatus::RATE_NEG_1:
+            rateInt = -1;
+            break;
         case MM::Player::RateStatus::RATE_1:
             rateInt = 1;
             break;

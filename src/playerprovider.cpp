@@ -568,6 +568,11 @@ void PlayerProvider::dequeueIndex (uint64_t idx, MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
 }
 
+void PlayerProvider::dequeueAll (MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    json_array_clear(playqueue);
+}
+
 void PlayerProvider::getCurrentPlayQueue (std::string &queue, MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     DLNAStringify(playqueue,queue,NULL);

@@ -61,6 +61,7 @@ public:
     void seek (uint64_t pos, MmError **e);
     void enqueueUri (std::string uri, MmError **e);
     void dequeueIndex (uint64_t idx, MmError **e);
+    void dequeueAll (MmError **e);
     void getCurrentPlayQueue (std::string &queue, MmError **e);
 
     void handlePropertyChangedSignal (std::string, GVariant *);

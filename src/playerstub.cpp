@@ -140,6 +140,16 @@ void PlayerStubImpl::dequeueIndex(uint64_t pos, MM::Player::PlayerError& e) {
     }
 }
 
+void PlayerStubImpl::dequeueAll(MM::Player::PlayerError& e) {
+    MmError *error = NULL;
+    m_player->dequeueAll (&error);
+
+    if (error) {
+        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
+    }
+}
+
 void PlayerStubImpl::getCurrentPlayQueue(std::string& playQueue, MM::Player::PlayerError& e) {
     MmError *error = NULL;
     std::string queue;

@@ -526,9 +526,12 @@ void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
 
     if (!PlayerProvider::connectMediaObject(uri, &mo, e))
         return;
-    const char *parent = dleyna_server_media_object2_get_parent (mo);
 
-    std::cout << "Parent is: " << parent << std::endl;
+    const char *parent = dleyna_server_media_object2_get_parent (mo);
+    if (!parent) {
+        std::cout << "Can't get parent, URI stale?" << std::endl;
+        return;
+    }
 
     if (!connectMediaContainer(parent, &mc, e))
         return;
@@ -536,21 +539,20 @@ void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
     dleyna_server_media_container2_call_list_items_sync (mc, 0, 100,
                                                          filterStrv, &out, NULL,
                                                          &error);
-
-    std::cout << "Type: " << g_variant_get_type_string (out) << std::endl;
-
+    if (error) {
+        std::cout << "Error listing items in " << parent << std::endl;
+        return;
+    }
 
     GVariantIter iter;
     GVariant *child;
 
     g_variant_iter_init (&iter, out);
-    while ((child = g_variant_iter_next_value (&iter)))
-      {
-        std::cout << "Child type:" << g_variant_get_type_string (child) << std::endl;
+    while ((child = g_variant_iter_next_value (&iter))) {
         GVariant *ref = g_variant_lookup_value (child, "Path", G_VARIANT_TYPE_OBJECT_PATH);
         if (ref) {
             if (g_variant_get_string(ref, NULL) == uri) {
-                std::cout << "Found item";
+                std::cout << "Enqueueing " << uri << std::endl;
 
                 json_t *js = DLNADictToJSON(child);
                 json_array_append(playqueue, js);
@@ -558,9 +560,6 @@ void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
         }
         g_variant_unref (child);
       }
-
-    std::cout << "Enf od loop" << std::endl;
-
 
     checkError (error, e);
 }

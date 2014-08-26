@@ -24,4 +24,7 @@ void DLNAStringify(const json_t *object,
 
 gchar **stdStrvToStrv(const std::vector<std::string> filter);
 
+std::vector<std::string> discoverDLNABackends(std::string type,
+                                              MmError **e);
+
 #endif /* COMMON_H */

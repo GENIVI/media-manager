@@ -20,68 +20,14 @@
 static char* PLAYER_PATH = "/com/intel/dLeynaRenderer/server/0";
 
 char *PlayerProvider::findFirstPlayer(MmError **e) {
-    char *path = NULL;
-    dleynaRendererOrgFreedesktopDBusPeer *peer = NULL;
-    int slashPos = -1;
-    for (int i = strlen(PLAYER_PATH); i > 0; i--) {
-        if (PLAYER_PATH[i] == '/') {
-            slashPos = i;
-            break;
-        }
+    std::vector<std::string> renderers = discoverDLNABackends ("renderers", e);
+    if (renderers.size() == 0) {
+        std::cout << "No renderers found!" << std::endl;
+        return NULL;
     }
 
-    path = g_strndup(PLAYER_PATH, slashPos);
-
-    for (int i = 0; i < 50; i++) {
-        char *newpath = g_strdup_printf("%s/%d", path, i);
-
-        GError *error = NULL;
-        GDBusProxy *proxy = NULL;
-        GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION,
-                                                NULL,
-                                                &error);
-
-        if (error) {
-            if (e)
-                (*e)->message = "Unable to get connection to bus";
-            return NULL;
-        }
-
-        proxy = g_dbus_proxy_new_sync (conn,
-                                       G_DBUS_PROXY_FLAGS_NONE,
-                                       NULL,
-                                       "com.intel.dleyna-renderer",
-                                       newpath,
-                                       "org.freedesktop.DBus.Properties",
-                                       NULL,
-                                       &error);
-
-        if (error) {
-            if (e)
-                (*e)->message = std::string("Unable to create proxy for ") + newpath;
-            return NULL;
-        }
-
-        GVariant *ret = g_dbus_proxy_call_sync (proxy,
-                                                "Get",
-                                                g_variant_new("(ss)",
-                                                              "org.mpris.MediaPlayer2",
-                                                              "Identity"),
-                                                G_DBUS_CALL_FLAGS_NONE,
-                                                -1,
-                                                NULL,
-                                                &error);
-        if (!error) {
-            g_printerr ("Found player on %s\n", newpath);
-            return newpath;
-            break;
-        } else {
-            g_printerr ("No player found on %s\n", newpath);
-        }
-    }
-
-    g_free (path);
-    return NULL;
+    std::string renderer = renderers.front();
+    return strdup (renderer.c_str());
 }
 
 void PlayerProvider::openURI(std::string uri,
@@ -431,6 +377,10 @@ std::string PlayerProvider::getLocalURL (json_t *item, bool &ok) {
 void PlayerProvider::next(MmError **e) {
     uint newPosition = 1;
 
+    if (m_repeat == org::genivi::MediaManager::Player::RepeatStatus::REPEAT_SINGLE) {
+        newPosition = 0;
+    }
+
     if (m_shuffle) {
         int playQueueSize = json_array_size (playqueue) - 1;
         newPosition = g_random_int_range (-playQueuePosition, playQueueSize - playQueuePosition);
@@ -456,7 +406,7 @@ void PlayerProvider::setRate (double rate, MmError **e) {
     checkError (error, e);
 }
 
-void PlayerProvider::setRepeat (bool repeat) {
+void PlayerProvider::setRepeat (org::genivi::MediaManager::Player::RepeatStatus repeat) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     m_repeat = repeat;
 }
@@ -593,7 +543,7 @@ bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
 
         if (playQueueSize < newPlayQueuePosition) {
             std::cout << "Play queue is smaller than " << playQueuePosition << " elements" << std::endl;
-            if (m_repeat && playQueueSize >= 0) {
+            if (m_repeat == org::genivi::MediaManager::Player::RepeatStatus::REPEAT && playQueueSize >= 0) {
                 std::cout << "Repeat is enabled, resetting play queue position to 0" << std::endl;
                 newPlayQueuePosition = 0;
             } else {

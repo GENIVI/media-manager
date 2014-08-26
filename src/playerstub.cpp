@@ -209,11 +209,7 @@ void PlayerStubImpl::onRemoteRateAttributeChanged() {
 
 void PlayerStubImpl::onRemoteRepeatAttributeChanged() {
     std::cout << "Remote has updated repeat attribute" << std::endl;
-
-    if (getRepeatAttribute() == MM::Player::RepeatStatus::REPEAT)
-        m_player->setRepeat(true);
-    else
-        m_player->setRepeat(false);
+    m_player->setRepeat(getRepeatAttribute());
 }
 void PlayerStubImpl::onRemoteShuffleAttributeChanged() {
     std::cout << "Remote has updated shuffle attribute" << std::endl;

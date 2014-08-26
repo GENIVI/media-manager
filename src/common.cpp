@@ -1,4 +1,7 @@
 #include "common.h"
+#include "unistd.h"
+
+#define MEDIA_MANAGER_IDENTIFIER "GENIVI MediaManager"
 
 json_t * DLNADictToJSON (GVariant *element) {
     if (!element) {
@@ -77,4 +80,151 @@ gchar **stdStrvToStrv(const std::vector<std::string> filter) {
     filterStrv[filter.size()] = NULL;
 
     return filterStrv;
+}
+
+bool pathIsMediaManager(std::string type, std::string path, MmError **e) {
+    GError *error = NULL;
+    GDBusProxy *proxy = NULL;
+    GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION,
+                                            NULL,
+                                            &error);
+
+    std::string interface;
+    std::string property;
+    std::string name;
+
+    if (type == "servers") {
+        interface = "org.gnome.UPnP.MediaObject2";
+        property = "DisplayName";
+        name = "com.intel.dleyna-server";
+    } else if (type == "renderers") {
+        interface = "org.mpris.MediaPlayer2";
+        property = "Identity";
+        name = "com.intel.dleyna-renderer";
+    } else {
+        return false;
+    }
+
+    proxy = g_dbus_proxy_new_sync (conn,
+                                   G_DBUS_PROXY_FLAGS_NONE,
+                                   NULL,
+                                   name.c_str(),
+                                   path.c_str(),
+                                   "org.freedesktop.DBus.Properties",
+                                   NULL,
+                                   &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to create proxy";
+        return false;
+    }
+
+    GVariant *ret = g_dbus_proxy_call_sync (proxy,
+                                            "Get",
+                                            g_variant_new("(ss)",
+                                                          interface.c_str(),
+                                                          property.c_str()),
+                                            G_DBUS_CALL_FLAGS_NONE,
+                                            -1,
+                                            NULL,
+                                            &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to get property for " + path;
+        return false;
+    }
+
+    GVariant *inner = g_variant_get_child_value (ret, 0);
+    GVariant *inner2 = g_variant_get_variant (inner);
+    const char *identity = g_variant_get_string(inner2, 0);
+
+    if (type == "servers")
+        return g_strcmp0(identity, MEDIA_MANAGER_IDENTIFIER) == 0;
+    else if (type == "renderers") {
+        char hostname[256];
+
+        gethostname (hostname, 256);
+        return g_strrstr(identity, hostname) != NULL;
+    } else {
+        return false;
+    }
+
+}
+
+std::vector<std::string> discoverDLNABackends(std::string type,
+                                              MmError **e)
+{
+    GError *error = NULL;
+    GDBusProxy *proxy = NULL;
+    GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION,
+                                            NULL,
+                                            &error);
+    std::vector<std::string> result;
+
+    std::string name;
+    std::string object_path;
+    std::string interface;
+    std::string method;
+
+    if (type == "servers") {
+        name = "com.intel.dleyna-server";
+        object_path = "/com/intel/dLeynaServer";
+        interface = "com.intel.dLeynaServer.Manager";
+        method = "GetServers";
+    } else if (type == "renderers") {
+        name = "com.intel.dleyna-renderer";
+        object_path = "/com/intel/dLeynaRenderer";
+        interface = "com.intel.dLeynaRenderer.Manager";
+        method = "GetRenderers";
+    } else {
+        return result;
+    }
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to get connection to bus";
+        return result;
+    }
+
+    proxy = g_dbus_proxy_new_sync (conn,
+                                   G_DBUS_PROXY_FLAGS_NONE,
+                                   NULL,
+                                   name.c_str(),
+                                   object_path.c_str(),
+                                   interface.c_str(),
+                                   NULL,
+                                   &error);
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to create proxy";
+        return result;
+    }
+
+    GVariant *ret = g_dbus_proxy_call_sync (proxy,
+                                            method.c_str(),
+                                            NULL,
+                                            G_DBUS_CALL_FLAGS_NONE,
+                                            -1,
+                                            NULL,
+                                            &error);
+
+    ret = g_variant_get_child_value(ret, 0);
+
+    gsize numObjs = 0;
+    const char **objs = g_variant_get_objv (ret, &numObjs);
+
+    for (gsize i = 0; i < numObjs; i++) {
+        if (pathIsMediaManager(type, objs[i], e)) {
+            result.push_back (objs[i]);
+        }
+    }
+
+    if (error) {
+        if (e)
+            (*e)->message = "Unable to get servers from dLeyna";
+    }
+
 }

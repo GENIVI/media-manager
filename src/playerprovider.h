@@ -41,7 +41,6 @@ public:
         playqueue(0),
         isPlaying(0),
         m_signalHandlerId(0),
-        m_repeat(0),
         m_shuffle(0)
         {}
     ~PlayerProvider() {}
@@ -53,7 +52,7 @@ public:
     void next (MmError **e);
     void previous (MmError **e);
     void setRate (double rate, MmError **e);
-    void setRepeat (bool);
+    void setRepeat (org::genivi::MediaManager::Player::RepeatStatus);
     void setShuffle (bool);
     void stop (MmError **e);
     void setPosition (uint64_t pos, MmError **e);
@@ -74,7 +73,7 @@ int playQueuePosition;
 json_t *playqueue;
 bool isPlaying;
 guint m_signalHandlerId;
-bool m_repeat;
+org::genivi::MediaManager::Player::RepeatStatus m_repeat;
 bool m_shuffle;
 
 bool registerSignalListener(std::string);

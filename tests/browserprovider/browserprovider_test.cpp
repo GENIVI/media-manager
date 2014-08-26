@@ -24,7 +24,7 @@ protected:
 TEST_F(BrowserProviderTest, DiscoverMediaManagers) {
     browserprovider.connect([&](MmError *browserError) {
         std::vector<std::string> managers;
-        browserprovider.discoverMediaManagers(managers, NULL);
+        managers = discoverDLNABackends("servers", NULL);
 
         for (int i = 0; i < managers.size(); i++) {
             std::cout << "Found manager: " << managers[i] << std::endl;

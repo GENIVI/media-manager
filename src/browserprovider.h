@@ -26,7 +26,6 @@
 #include "serviceprovider.h"
 #include "dleyna-generated.h"
 
-#define MEDIA_MANAGER_IDENTIFIER "GENIVI MediaManager"
 
 class BrowserProvider : public ServiceProvider {
 

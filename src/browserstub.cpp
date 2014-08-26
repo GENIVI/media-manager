@@ -12,6 +12,7 @@
   */
 
 #include "browserstub.h"
+#include "common.h"
 
 namespace MM = org::genivi::MediaManager;
 
@@ -21,7 +22,7 @@ BrowserStubImpl::BrowserStubImpl (BrowserProvider *browser) {
 
 void BrowserStubImpl::discoverMediaManagers(std::vector<std::string> &idents,
                                             MM::Browser::BrowserError& e) {
-    m_browser->discoverMediaManagers(idents, NULL);
+    idents = discoverDLNABackends("servers", NULL);
 }
 
 void BrowserStubImpl::listContainers(std::string path,

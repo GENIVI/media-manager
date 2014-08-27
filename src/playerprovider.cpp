@@ -19,6 +19,21 @@
 
 static char* PLAYER_PATH = "/com/intel/dLeynaRenderer/server/0";
 
+PlayerProvider::PlayerProvider() :
+    ServiceProvider("com.intel.dleyna-renderer"),
+    playQueuePosition(UINT64_MAX),
+    stub(0),
+    mp(0),
+    mc(0),
+    playqueue(0),
+    isPlaying(0),
+    m_signalHandlerId(0),
+    m_shuffle(0),
+    m_muted(0),
+    m_playrate(1),
+    m_repeat (org::genivi::MediaManager::Player::RepeatStatus::REPEAT),
+    m_volume(1)
+{}
 char *PlayerProvider::findFirstPlayer(MmError **e) {
     std::vector<std::string> renderers = discoverDLNABackends ("renderers", e);
     if (renderers.size() == 0) {
@@ -398,6 +413,8 @@ void PlayerProvider::previous(MmError **e) {
 void PlayerProvider::setRate (double rate, MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                           *error = NULL;
+
+    m_playrate = rate;
 
     if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
         return;

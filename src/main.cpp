@@ -45,6 +45,7 @@ bool registerService (std::shared_ptr<CommonAPI::Runtime> runtime,
 
         if (!e) {
             auto stub = std::make_shared<StubImpl>(provider);
+
             const bool success= servicePublisher->registerService(stub,
                                                                    address,
                                                                    factory);

@@ -32,17 +32,7 @@ class PlayerProvider : public ServiceProvider {
 friend class PlayerStubImpl;
 
 public:
-    PlayerProvider() :
-        ServiceProvider("com.intel.dleyna-renderer"),
-        playQueuePosition(0),
-        stub(0),
-        mp(0),
-        mc(0),
-        playqueue(0),
-        isPlaying(0),
-        m_signalHandlerId(0),
-        m_shuffle(0)
-        {}
+    PlayerProvider();
     ~PlayerProvider() {}
     void openURI(std::string uri, MmError **e);
     void pause(MmError **e);
@@ -69,12 +59,15 @@ private:
 dleynaRendererMediaPlayer2Player *mp;
 dleynaServerMediaContainer2      *mc;
 dleynaServerMediaObject2         *mo;
-int playQueuePosition;
+uint64_t playQueuePosition;
 json_t *playqueue;
 bool isPlaying;
 guint m_signalHandlerId;
 org::genivi::MediaManager::Player::RepeatStatus m_repeat;
 bool m_shuffle;
+bool m_muted;
+double m_playrate;
+double m_volume;
 
 bool registerSignalListener(std::string);
 

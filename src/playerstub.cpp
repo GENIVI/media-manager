@@ -18,6 +18,74 @@ namespace MM = org::genivi::MediaManager;
 PlayerStubImpl::PlayerStubImpl (PlayerProvider *player) {
     m_player = player;
     m_player->stub = this;
+
+    initializeDefaultValues();
+}
+
+void PlayerStubImpl::initializeDefaultValues() {
+    /* Mute */
+    if (m_player->m_muted)
+        trySetMuteAttribute (MM::Player::MuteStatus::MUTED);
+    else
+        trySetMuteAttribute (MM::Player::MuteStatus::UNMUTED);
+
+    /* Shuffle */
+    if (m_player->m_shuffle)
+        trySetShuffleAttribute(MM::Player::ShuffleStatus::SHUFFLE);
+    else
+       trySetShuffleAttribute(MM::Player::ShuffleStatus::UNSHUFFLE);
+
+    /* Repeat */
+    setRepeatAttribute (m_player->m_repeat);
+
+    /* Rate */
+    switch ((int) m_player->m_playrate) {
+        case 1:
+            trySetRateAttribute(MM::Player::RateStatus::RATE_1);
+            break;
+        case 2:
+            trySetRateAttribute(MM::Player::RateStatus::RATE_2);
+            break;
+        case 4:
+            trySetRateAttribute(MM::Player::RateStatus::RATE_4);
+            break;
+        case 8:
+            trySetRateAttribute(MM::Player::RateStatus::RATE_8);
+            break;
+        case 16:
+            trySetRateAttribute(MM::Player::RateStatus::RATE_16);
+            break;
+    }
+
+    /* Volume */
+    trySetVolumeAttribute (m_player->m_volume);
+
+    /* Go next */
+    trySetCanGoNextAttribute(false);
+
+    /* Go previous */
+    trySetCanGoPreviousAttribute(false);
+
+    /* Can Pause */
+    trySetCanPauseAttribute (false);
+
+    /* Can Play */
+    trySetCanPlayAttribute (false);
+
+    /* Can Seek */
+    trySetCanSeekAttribute (false);
+
+    /* Current track */
+    trySetCurrentTrackAttribute (m_player->playQueuePosition);
+
+    /* Playback status */
+    if (m_player->isPlaying)
+        trySetPlaybackStatusAttribute (MM::Player::PlaybackStatus::PLAYING);
+    else
+        trySetPlaybackStatusAttribute (MM::Player::PlaybackStatus::PAUSED);
+
+    /* Play position */
+    trySetPositionAttribute (UINT64_MAX - 1);
 }
 
 void PlayerStubImpl::next(MM::Player::PlayerError& e) {

@@ -27,6 +27,8 @@ class PlayerStubImpl: public org::genivi::MediaManager::PlayerStubDefault {
 public:
     PlayerStubImpl (PlayerProvider *browser);
 
+    void initializeDefaultValues();
+
     virtual void next(MM::Player::PlayerError& e);
     virtual void openUri(std::string uri, MM::Player::PlayerError& e);
     virtual void openPlaylist(std::string uri, MM::Player::PlayerError& e);

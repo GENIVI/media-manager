@@ -51,3 +51,4 @@ make %{?jobs:-j%jobs}
 
 %files
 /usr/bin/media-manager
+/etc/udev/rules.d/10-media-manager-usb-mount-rules.rules

@@ -53,6 +53,14 @@ public:
                          std::string& result,
                          MM::Browser::BrowserError& e);
 
+    void searchObjects(std::string path,
+                       std::string query,
+                       uint64_t offset,
+                       uint64_t count,
+                       std::vector<std::string> filter,
+                       std::string& objects,
+                       MM::Browser::BrowserError& e);
+
 private:
     BrowserProvider *m_browser;
 };

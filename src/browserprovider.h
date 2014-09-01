@@ -61,6 +61,14 @@ public:
                          std::string& result,
                          MmError **e);
 
+    void searchObjects(std::string path,
+                       std::string query,
+                       uint64_t offset,
+                       uint64_t count,
+                       std::vector<std::string> filter,
+                       std::string& objects,
+                       MmError **e);
+
 private:
     /**
      * Convert a DLNA dictionary, typically retrieved from dLeyna, to a JSON

@@ -60,3 +60,13 @@ void BrowserStubImpl::createContainer(std::string path,
                      MM::Browser::BrowserError& e) {
     m_browser->createContainer (path, displayname, childTypes, result, NULL);
 }
+
+void BrowserStubImpl::searchObjects(std::string path,
+                                    std::string query,
+                                    uint64_t offset,
+                                    uint64_t count,
+                                    std::vector<std::string> filter,
+                                    std::string& objects,
+                                    MM::Browser::BrowserError& e) {
+    m_browser->searchObjects (path, query, offset, count, filter, objects, NULL);
+}

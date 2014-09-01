@@ -106,7 +106,7 @@ void BrowserProvider::createReference(std::string path,
                                                               &error);
 
     if (error) {
-        std::cout << "Error in listItems D-Bus call: " << error->message << std::endl;
+        std::cout << "Error in createReference D-Bus call: " << error->message << std::endl;
         if (e)
             (*e)->message = error->message;
         return;
@@ -134,13 +134,53 @@ void BrowserProvider::createContainer(std::string path,
                                                               &error);
 
     if (error) {
-        std::cout << "Error in listItems D-Bus call: " << error->message << std::endl;
+        std::cout << "Error in createContainer D-Bus call: " << error->message << std::endl;
         if (e)
             (*e)->message = error->message;
         return;
     }
 
     result = out;
+}
+
+void BrowserProvider::searchObjects(std::string path,
+                                    std::string query,
+                                    uint64_t offset,
+                                    uint64_t count,
+                                    std::vector<std::string> filter,
+                                    std::string& objects,
+                                    MmError **e) {
+    GError                      *error  = NULL;
+    GVariant                    *out    = NULL;
+    dleynaServerMediaContainer2 *mc     = NULL;
+    json_t                      *object = NULL;
+
+    gchar **flt = stdStrvToStrv (filter);
+
+    if (!BrowserProvider::connectMediaContainer(path, &mc, e))
+        return;
+    dleyna_server_media_container2_call_search_objects_sync (mc,
+                                                             query.c_str(),
+                                                             offset,
+                                                             count,
+                                                             flt,
+                                                             &out, NULL,
+                                                             &error);
+
+    if (error) {
+        std::cout << "Error in searchObjects D-Bus call: " << error->message << std::endl;
+        if (e)
+            (*e)->message = error->message;
+        return;
+    }
+
+    object = DLNADictToJSON (out);
+    DLNAStringify (object, objects, e);
+    json_decref (object);
+
+    for (uint i = 0; i < filter.size(); i++) {
+        free (flt[i]);
+    }
 }
 
 bool BrowserProvider::connectMediaContainer (const std::string path,

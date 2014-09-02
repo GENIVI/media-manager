@@ -20,6 +20,18 @@ BrowserStubImpl::BrowserStubImpl (BrowserProvider *browser) {
     m_browser = browser;
 }
 
+std::string sortKeyToString (MM::Browser::SortKey sk) {
+    std::string keyStr;
+    if (sk.order == MM::Browser::SortOrder::ASCENDING)
+        keyStr += "+";
+    else
+        keyStr += "-";
+
+    keyStr += sk.keyName;
+
+    return keyStr;
+}
+
 void BrowserStubImpl::discoverMediaManagers(std::vector<std::string> &idents,
                                             MM::Browser::BrowserError& e) {
     idents = discoverDLNABackends("servers", NULL);
@@ -32,7 +44,29 @@ void BrowserStubImpl::listContainers(std::string path,
                             std::string& containers,
                             MM::Browser::BrowserError& e) {
 
-    m_browser->listContainers(path, offset, count, filter, containers, NULL);
+    m_browser->listContainers(path,
+                              offset,
+                              count,
+                              filter,
+                              containers,
+                              NULL);
+}
+
+void BrowserStubImpl::listContainersEx(std::string path,
+                                       uint64_t offset,
+                                       uint64_t count,
+                                       std::vector<std::string> filter,
+                                       MM::Browser::SortKey sortKey,
+                                       std::string& containers,
+                                       MM::Browser::BrowserError& e) {
+
+    m_browser->listContainersEx(path,
+                                offset,
+                                count,
+                                filter,
+                                sortKeyToString(sortKey),
+                                containers,
+                                NULL);
 }
 
 void BrowserStubImpl::listItems(std::string path,
@@ -42,7 +76,29 @@ void BrowserStubImpl::listItems(std::string path,
                             std::string& items,
                             MM::Browser::BrowserError& e) {
 
-    m_browser->listItems(path, offset, count, filter, items, NULL);
+    m_browser->listItems(path,
+                         offset,
+                         count,
+                         filter,
+                         items,
+                         NULL);
+}
+
+void BrowserStubImpl::listItemsEx(std::string path,
+                                  uint64_t offset,
+                                  uint64_t count,
+                                  std::vector<std::string> filter,
+                                  MM::Browser::SortKey sortKey,
+                                  std::string& items,
+                                  MM::Browser::BrowserError& e) {
+
+    m_browser->listItemsEx(path,
+                           offset,
+                           count,
+                           filter,
+                           sortKeyToString(sortKey),
+                           items,
+                           NULL);
 }
 
 void BrowserStubImpl::createReference(std::string path,
@@ -50,7 +106,10 @@ void BrowserStubImpl::createReference(std::string path,
                          std::string& result,
                          MM::Browser::BrowserError& e) {
 
-    m_browser->createReference(path, reference, result, NULL);
+    m_browser->createReference(path,
+                               reference,
+                               result,
+                               NULL);
 }
 
 void BrowserStubImpl::createContainer(std::string path,
@@ -58,7 +117,11 @@ void BrowserStubImpl::createContainer(std::string path,
                      std::vector<std::string> childTypes,
                      std::string& result,
                      MM::Browser::BrowserError& e) {
-    m_browser->createContainer (path, displayname, childTypes, result, NULL);
+    m_browser->createContainer (path,
+                                displayname,
+                                childTypes,
+                                result,
+                                NULL);
 }
 
 void BrowserStubImpl::searchObjects(std::string path,
@@ -68,5 +131,29 @@ void BrowserStubImpl::searchObjects(std::string path,
                                     std::vector<std::string> filter,
                                     std::string& objects,
                                     MM::Browser::BrowserError& e) {
-    m_browser->searchObjects (path, query, offset, count, filter, objects, NULL);
+    m_browser->searchObjects (path,
+                              query,
+                              offset,
+                              count,
+                              filter,
+                              objects,
+                              NULL);
+}
+
+void BrowserStubImpl::searchObjectsEx(std::string path,
+                                      std::string query,
+                                      uint64_t offset,
+                                      uint64_t count,
+                                      std::vector<std::string> filter,
+                                      MM::Browser::SortKey sortKey,
+                                      std::string& objects,
+                                      MM::Browser::BrowserError& e) {
+    m_browser->searchObjectsEx (path,
+                                query,
+                                offset,
+                                count,
+                                filter,
+                                sortKeyToString(sortKey),
+                                objects,
+                                NULL);
 }

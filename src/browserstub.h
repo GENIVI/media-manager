@@ -28,6 +28,7 @@ public:
     BrowserStubImpl (BrowserProvider *browser);
     void discoverMediaManagers(std::vector<std::string> &idents,
                                MM::Browser::BrowserError& e);
+
     void listContainers(std::string path,
                                 uint64_t offset,
                                 uint64_t count,
@@ -35,17 +36,33 @@ public:
                                 std::string& containers,
                                 MM::Browser::BrowserError& e);
 
+    void listContainersEx(std::string path,
+                          uint64_t offset,
+                          uint64_t count,
+                          std::vector<std::string> filter,
+                          MM::Browser::SortKey sortKey,
+                          std::string& containers,
+                          MM::Browser::BrowserError& e);
+
     void listItems(std::string path,
-                            uint64_t offset,
-                            uint64_t count,
-                            std::vector<std::string> filter,
-                            std::string& items,
-                            MM::Browser::BrowserError& e);
+                   uint64_t offset,
+                   uint64_t count,
+                   std::vector<std::string> filter,
+                   std::string& items,
+                   MM::Browser::BrowserError& e);
+
+    void listItemsEx(std::string path,
+                     uint64_t offset,
+                     uint64_t count,
+                     std::vector<std::string> filter,
+                     MM::Browser::SortKey sortKey,
+                     std::string& items,
+                     MM::Browser::BrowserError& e);
 
     void createReference(std::string path,
-                             std::string reference,
-                             std::string& result,
-                             MM::Browser::BrowserError& e);
+                         std::string reference,
+                         std::string& result,
+                         MM::Browser::BrowserError& e);
 
     void createContainer(std::string path,
                          std::string displayname,
@@ -60,6 +77,15 @@ public:
                        std::vector<std::string> filter,
                        std::string& objects,
                        MM::Browser::BrowserError& e);
+
+    void searchObjectsEx(std::string path,
+                         std::string query,
+                         uint64_t offset,
+                         uint64_t count,
+                         std::vector<std::string> filter,
+                         MM::Browser::SortKey sortKey,
+                         std::string& objects,
+                         MM::Browser::BrowserError& e);
 
 private:
     BrowserProvider *m_browser;

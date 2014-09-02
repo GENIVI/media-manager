@@ -43,12 +43,28 @@ public:
                         std::string& containers,
                         MmError **e);
 
+    void listContainersEx(std::string path,
+                          uint64_t offset,
+                          uint64_t count,
+                          std::vector<std::string> filter,
+                          std::string sortKey,
+                          std::string& containers,
+                          MmError **e);
+
     void listItems(std::string path,
                    uint64_t offset,
                    uint64_t count,
                    std::vector<std::string> filter,
                    std::string& items,
                    MmError **e);
+
+    void listItemsEx(std::string path,
+                     uint64_t offset,
+                     uint64_t count,
+                     std::vector<std::string> filter,
+                     std::string sortKey,
+                     std::string& items,
+                     MmError **e);
 
     void createReference(std::string path,
                          std::string reference,
@@ -69,6 +85,15 @@ public:
                        std::string& objects,
                        MmError **e);
 
+    void searchObjectsEx(std::string path,
+                         std::string query,
+                         uint64_t offset,
+                         uint64_t count,
+                         std::vector<std::string> filter,
+                         std::string sortKey,
+                         std::string& objects,
+                         MmError **e);
+
 private:
     /**
      * Convert a DLNA dictionary, typically retrieved from dLeyna, to a JSON
@@ -81,7 +106,33 @@ private:
     bool connectMediaContainer (const std::string path,
                                 dleynaServerMediaContainer2 **mc,
                                 MmError **e);
+
     bool pathIsMediaManager(std::string, MmError **e);
+
+    void listContainersGeneral (std::string path,
+                                uint64_t offset,
+                                uint64_t count,
+                                std::vector<std::string> filter,
+                                std::string& containers,
+                                std::string sortKey,
+                                MmError **e);
+
+    void searchObjectsGeneral(std::string path,
+                              std::string query,
+                              uint64_t offset,
+                              uint64_t count,
+                              std::vector<std::string> filter,
+                              std::string sortKey,
+                              std::string& objects,
+                              MmError **e);
+
+    void listItemsGeneral(std::string path,
+                          uint64_t offset,
+                          uint64_t count,
+                          std::vector<std::string> filter,
+                          std::string sortKey,
+                          std::string& items,
+                          MmError **e);
 };
 
 #endif /* BROWSERPROVIDER_H */

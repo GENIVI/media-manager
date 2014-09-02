@@ -16,14 +16,15 @@
 
 #include "browserprovider.h"
 
-
-void BrowserProvider::listContainers(std::string path,
+void BrowserProvider::listContainersGeneral (std::string path,
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
                                 std::string& containers,
+                                std::string sortKey,
                                 MmError **e)
 {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                *error  = NULL;
     GVariant              *out    = NULL;
     json_t                *object = NULL;
@@ -34,9 +35,14 @@ void BrowserProvider::listContainers(std::string path,
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
 
-    dleyna_server_media_container2_call_list_containers_sync (mc, offset, count,
-                                                       filterStrv, &out, NULL,
-                                                       &error);
+    if (sortKey == "")
+        dleyna_server_media_container2_call_list_containers_sync (mc, offset, count,
+                                                           filterStrv, &out, NULL,
+                                                           &error);
+    else
+        dleyna_server_media_container2_call_list_containers_ex_sync (mc, offset, count,
+                                                           filterStrv, sortKey.c_str(), &out, NULL,
+                                                           &error);
 
     if (error) {
         std::cout << "Error in listContainers D-Bus call: " << error->message << std::endl;
@@ -53,13 +59,38 @@ void BrowserProvider::listContainers(std::string path,
     }
 }
 
-void BrowserProvider::listItems(std::string path,
+void BrowserProvider::listContainers(std::string path,
+                                     uint64_t offset,
+                                     uint64_t count,
+                                     std::vector<std::string> filter,
+                                     std::string& containers,
+                                     MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    listContainersGeneral(path, offset, count, filter, containers, "", e);
+}
+
+void BrowserProvider::listContainersEx(std::string path,
+                                       uint64_t offset,
+                                       uint64_t count,
+                                       std::vector<std::string> filter,
+                                       std::string sortKey,
+                                       std::string& containers,
+                                       MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    listContainersGeneral(path, offset, count, filter, containers, sortKey, e);
+}
+
+void BrowserProvider::listItemsGeneral (std::string path,
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
+                                std::string sortKey,
                                 std::string& items,
                                 MmError **e)
 {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                *error  = NULL;
     GVariant              *out    = NULL;
     json_t                *object = NULL;
@@ -70,9 +101,14 @@ void BrowserProvider::listItems(std::string path,
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
 
-    dleyna_server_media_container2_call_list_items_sync (mc, offset, count,
-                                                  filterStrv, &out, NULL,
-                                                  &error);
+    if (sortKey == "")
+        dleyna_server_media_container2_call_list_items_sync (mc, offset, count,
+                                                      filterStrv, &out, NULL,
+                                                      &error);
+    else
+        dleyna_server_media_container2_call_list_items_ex_sync (mc, offset, count,
+                                                      filterStrv, sortKey.c_str(), &out, NULL,
+                                                      &error);
 
     if (error) {
         std::cout << "Error in listItems D-Bus call: " << error->message << std::endl;
@@ -89,12 +125,34 @@ void BrowserProvider::listItems(std::string path,
         free (filterStrv[i]);
     }
 }
+void BrowserProvider::listItems(std::string path,
+                                uint64_t offset,
+                                uint64_t count,
+                                std::vector<std::string> filter,
+                                std::string& items,
+                                MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    listItemsGeneral (path, offset, count, filter, "", items, e);
+}
+void BrowserProvider::listItemsEx(std::string path,
+                                uint64_t offset,
+                                uint64_t count,
+                                std::vector<std::string> filter,
+                                std::string sortKey,
+                                std::string& items,
+                                MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    listItemsGeneral (path, offset, count, filter, sortKey, items, e);
+}
 
 void BrowserProvider::createReference(std::string path,
                                       std::string reference,
                                       std::string& result,
                                       MmError **e)
 {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                      *error  = NULL;
     gchar                       *out    = NULL;
     dleynaServerMediaContainer2 *mc     = NULL;
@@ -118,6 +176,7 @@ void BrowserProvider::createContainer(std::string path,
                      std::string& result,
                      MmError **e)
 {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                      *error  = NULL;
     gchar                       *out    = NULL;
     dleynaServerMediaContainer2 *mc     = NULL;
@@ -143,29 +202,45 @@ void BrowserProvider::createContainer(std::string path,
     result = out;
 }
 
-void BrowserProvider::searchObjects(std::string path,
+void BrowserProvider::searchObjectsGeneral(std::string path,
                                     std::string query,
                                     uint64_t offset,
                                     uint64_t count,
                                     std::vector<std::string> filter,
+                                    std::string sortKey,
                                     std::string& objects,
                                     MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                      *error  = NULL;
     GVariant                    *out    = NULL;
     dleynaServerMediaContainer2 *mc     = NULL;
     json_t                      *object = NULL;
+    guint                        total_items;
 
     gchar **flt = stdStrvToStrv (filter);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
-    dleyna_server_media_container2_call_search_objects_sync (mc,
-                                                             query.c_str(),
-                                                             offset,
-                                                             count,
-                                                             flt,
-                                                             &out, NULL,
-                                                             &error);
+
+    if (sortKey == "")
+        dleyna_server_media_container2_call_search_objects_sync (mc,
+                                                                 query.c_str(),
+                                                                 offset,
+                                                                 count,
+                                                                 flt,
+                                                                 &out, NULL,
+                                                                 &error);
+    else
+        dleyna_server_media_container2_call_search_objects_ex_sync (mc,
+                                                                 query.c_str(),
+                                                                 offset,
+                                                                 count,
+                                                                 flt,
+                                                                 sortKey.c_str(),
+                                                                 &out,
+                                                                 &total_items,
+                                                                 NULL,
+                                                                 &error);
 
     if (error) {
         std::cout << "Error in searchObjects D-Bus call: " << error->message << std::endl;
@@ -182,10 +257,34 @@ void BrowserProvider::searchObjects(std::string path,
         free (flt[i]);
     }
 }
+void BrowserProvider::searchObjects(std::string path,
+                                    std::string query,
+                                    uint64_t offset,
+                                    uint64_t count,
+                                    std::vector<std::string> filter,
+                                    std::string& objects,
+                                    MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    searchObjectsGeneral (path, query, offset, count, filter, "", objects, e);
+}
+void BrowserProvider::searchObjectsEx(std::string path,
+                                      std::string query,
+                                      uint64_t offset,
+                                      uint64_t count,
+                                      std::vector<std::string> filter,
+                                      std::string sortKey,
+                                      std::string& objects,
+                                      MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    searchObjectsGeneral (path, query, offset, count, filter, sortKey, objects, e);
+}
 
 bool BrowserProvider::connectMediaContainer (const std::string path,
                                              dleynaServerMediaContainer2 **mc,
                                              MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError *error = NULL;
 
     if (!g_variant_is_object_path (path.c_str())) {

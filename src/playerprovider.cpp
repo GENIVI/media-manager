@@ -31,7 +31,7 @@ PlayerProvider::PlayerProvider() :
     m_shuffle(0),
     m_muted(0),
     m_playrate(1),
-    m_repeat (org::genivi::MediaManager::Player::RepeatStatus::REPEAT),
+    m_repeat (org::genivi::mediamanager::PlayerTypes::RepeatStatus::REPEAT),
     m_volume(1)
 {}
 char *PlayerProvider::findFirstPlayer(MmError **e) {
@@ -71,7 +71,7 @@ void PlayerProvider::pause(MmError **e) {
 
     // dLeyna says we failed to pause, but PAUSED to the client anyway
     if (!checkError (error, e)) {
-        this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PAUSED);
+        this->stub->setPlaybackStatusAttribute(org::genivi::mediamanager::PlayerTypes::PlaybackStatus::PAUSED);
     }
 }
 
@@ -217,9 +217,9 @@ void PlayerProvider::handlePropertyChangedSignal (std::string key, GVariant *val
         std::cout << "Key: " << key << std::endl;
         std::cout << "Value: " << g_variant_get_string (value, NULL) << std::endl;
         if (g_strcmp0(g_variant_get_string(value,NULL), "Playing") == 0)
-            this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PLAYING);
+            this->stub->setPlaybackStatusAttribute(org::genivi::mediamanager::PlayerTypes::PlaybackStatus::PLAYING);
         else if (g_strcmp0(g_variant_get_string(value,NULL), "Paused") == 0)
-            this->stub->setPlaybackStatusAttribute(org::genivi::MediaManager::Player::PlaybackStatus::PAUSED);
+            this->stub->setPlaybackStatusAttribute(org::genivi::mediamanager::PlayerTypes::PlaybackStatus::PAUSED);
         else if (g_strcmp0(g_variant_get_string(value,NULL), "Stopped") == 0) {
             next(NULL);
         } else {
@@ -392,7 +392,7 @@ std::string PlayerProvider::getLocalURL (json_t *item, bool &ok) {
 void PlayerProvider::next(MmError **e) {
     uint newPosition = 1;
 
-    if (m_repeat == org::genivi::MediaManager::Player::RepeatStatus::REPEAT_SINGLE) {
+    if (m_repeat == org::genivi::mediamanager::PlayerTypes::RepeatStatus::REPEAT_SINGLE) {
         newPosition = 0;
     }
 
@@ -423,7 +423,7 @@ void PlayerProvider::setRate (double rate, MmError **e) {
     checkError (error, e);
 }
 
-void PlayerProvider::setRepeat (org::genivi::MediaManager::Player::RepeatStatus repeat) {
+void PlayerProvider::setRepeat (org::genivi::mediamanager::PlayerTypes::RepeatStatus repeat) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     m_repeat = repeat;
 }
@@ -560,7 +560,7 @@ bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
 
         if (playQueueSize < newPlayQueuePosition) {
             std::cout << "Play queue is smaller than " << playQueuePosition << " elements" << std::endl;
-            if (m_repeat == org::genivi::MediaManager::Player::RepeatStatus::REPEAT && playQueueSize >= 0) {
+            if (m_repeat == org::genivi::mediamanager::PlayerTypes::RepeatStatus::REPEAT && playQueueSize >= 0) {
                 std::cout << "Repeat is enabled, resetting play queue position to 0" << std::endl;
                 newPlayQueuePosition = 0;
             } else {

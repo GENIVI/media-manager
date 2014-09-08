@@ -16,13 +16,13 @@
 
 #include <CommonAPI/CommonAPI.h>
 
-#include "../src-gen/org/genivi/MediaManager/IndexerStubDefault.h"
+#include "../src-gen/org/genivi/mediamanager/IndexerStubDefault.h"
 
 #include "lms.h"
 
-namespace MM = org::genivi::MediaManager;
+namespace MM = org::genivi::mediamanager;
 
-class IndexerStubImpl: public org::genivi::MediaManager::IndexerStubDefault {
+class IndexerStubImpl: public org::genivi::mediamanager::IndexerStubDefault {
 
 public:
     IndexerStubImpl (LMSProvider *lms);

@@ -14,15 +14,15 @@
 #include "browserstub.h"
 #include "common.h"
 
-namespace MM = org::genivi::MediaManager;
+namespace MM = org::genivi::mediamanager;
 
 BrowserStubImpl::BrowserStubImpl (BrowserProvider *browser) {
     m_browser = browser;
 }
 
-std::string sortKeyToString (MM::Browser::SortKey sk) {
+std::string sortKeyToString (MM::BrowserTypes::SortKey sk) {
     std::string keyStr;
-    if (sk.order == MM::Browser::SortOrder::ASCENDING)
+    if (sk.order == MM::BrowserTypes::SortOrder::ASCENDING)
         keyStr += "+";
     else
         keyStr += "-";
@@ -33,7 +33,7 @@ std::string sortKeyToString (MM::Browser::SortKey sk) {
 }
 
 void BrowserStubImpl::discoverMediaManagers(std::vector<std::string> &idents,
-                                            MM::Browser::BrowserError& e) {
+                                            MM::BrowserTypes::BrowserError& e) {
     idents = discoverDLNABackends("servers", NULL);
 }
 
@@ -42,7 +42,7 @@ void BrowserStubImpl::listContainers(std::string path,
                             uint64_t count,
                             std::vector<std::string> filter,
                             std::string& containers,
-                            MM::Browser::BrowserError& e) {
+                            MM::BrowserTypes::BrowserError& e) {
 
     m_browser->listContainers(path,
                               offset,
@@ -56,9 +56,9 @@ void BrowserStubImpl::listContainersEx(std::string path,
                                        uint64_t offset,
                                        uint64_t count,
                                        std::vector<std::string> filter,
-                                       MM::Browser::SortKey sortKey,
+                                       MM::BrowserTypes::SortKey sortKey,
                                        std::string& containers,
-                                       MM::Browser::BrowserError& e) {
+                                       MM::BrowserTypes::BrowserError& e) {
 
     m_browser->listContainersEx(path,
                                 offset,
@@ -74,7 +74,7 @@ void BrowserStubImpl::listItems(std::string path,
                             uint64_t count,
                             std::vector<std::string> filter,
                             std::string& items,
-                            MM::Browser::BrowserError& e) {
+                            MM::BrowserTypes::BrowserError& e) {
 
     m_browser->listItems(path,
                          offset,
@@ -88,9 +88,9 @@ void BrowserStubImpl::listItemsEx(std::string path,
                                   uint64_t offset,
                                   uint64_t count,
                                   std::vector<std::string> filter,
-                                  MM::Browser::SortKey sortKey,
+                                  MM::BrowserTypes::SortKey sortKey,
                                   std::string& items,
-                                  MM::Browser::BrowserError& e) {
+                                  MM::BrowserTypes::BrowserError& e) {
 
     m_browser->listItemsEx(path,
                            offset,
@@ -104,7 +104,7 @@ void BrowserStubImpl::listItemsEx(std::string path,
 void BrowserStubImpl::createReference(std::string path,
                          std::string reference,
                          std::string& result,
-                         MM::Browser::BrowserError& e) {
+                         MM::BrowserTypes::BrowserError& e) {
 
     m_browser->createReference(path,
                                reference,
@@ -116,7 +116,7 @@ void BrowserStubImpl::createContainer(std::string path,
                      std::string displayname,
                      std::vector<std::string> childTypes,
                      std::string& result,
-                     MM::Browser::BrowserError& e) {
+                     MM::BrowserTypes::BrowserError& e) {
     m_browser->createContainer (path,
                                 displayname,
                                 childTypes,
@@ -130,7 +130,7 @@ void BrowserStubImpl::searchObjects(std::string path,
                                     uint64_t count,
                                     std::vector<std::string> filter,
                                     std::string& objects,
-                                    MM::Browser::BrowserError& e) {
+                                    MM::BrowserTypes::BrowserError& e) {
     m_browser->searchObjects (path,
                               query,
                               offset,
@@ -145,9 +145,9 @@ void BrowserStubImpl::searchObjectsEx(std::string path,
                                       uint64_t offset,
                                       uint64_t count,
                                       std::vector<std::string> filter,
-                                      MM::Browser::SortKey sortKey,
+                                      MM::BrowserTypes::SortKey sortKey,
                                       std::string& objects,
-                                      MM::Browser::BrowserError& e) {
+                                      MM::BrowserTypes::BrowserError& e) {
     m_browser->searchObjectsEx (path,
                                 query,
                                 offset,

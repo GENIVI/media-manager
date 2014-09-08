@@ -16,7 +16,7 @@
 #include "indexerstub.h"
 #include "common.h"
 
-namespace MM = org::genivi::MediaManager;
+namespace MM = org::genivi::mediamanager;
 
 IndexerStubImpl::IndexerStubImpl (LMSProvider *lms) {
     m_lms = lms;

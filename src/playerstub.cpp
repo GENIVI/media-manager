@@ -13,7 +13,7 @@
 
 #include "playerstub.h"
 
-namespace MM = org::genivi::MediaManager;
+namespace MM = org::genivi::mediamanager;
 
 PlayerStubImpl::PlayerStubImpl (PlayerProvider *player) {
     m_player = player;
@@ -25,15 +25,15 @@ PlayerStubImpl::PlayerStubImpl (PlayerProvider *player) {
 void PlayerStubImpl::initializeDefaultValues() {
     /* Mute */
     if (m_player->m_muted)
-        trySetMuteAttribute (MM::Player::MuteStatus::MUTED);
+        trySetMuteAttribute (MM::PlayerTypes::MuteStatus::MUTED);
     else
-        trySetMuteAttribute (MM::Player::MuteStatus::UNMUTED);
+        trySetMuteAttribute (MM::PlayerTypes::MuteStatus::UNMUTED);
 
     /* Shuffle */
     if (m_player->m_shuffle)
-        trySetShuffleAttribute(MM::Player::ShuffleStatus::SHUFFLE);
+        trySetShuffleAttribute(MM::PlayerTypes::ShuffleStatus::SHUFFLE);
     else
-       trySetShuffleAttribute(MM::Player::ShuffleStatus::UNSHUFFLE);
+       trySetShuffleAttribute(MM::PlayerTypes::ShuffleStatus::UNSHUFFLE);
 
     /* Repeat */
     setRepeatAttribute (m_player->m_repeat);
@@ -41,19 +41,19 @@ void PlayerStubImpl::initializeDefaultValues() {
     /* Rate */
     switch ((int) m_player->m_playrate) {
         case 1:
-            trySetRateAttribute(MM::Player::RateStatus::RATE_1);
+            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_1);
             break;
         case 2:
-            trySetRateAttribute(MM::Player::RateStatus::RATE_2);
+            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_2);
             break;
         case 4:
-            trySetRateAttribute(MM::Player::RateStatus::RATE_4);
+            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_4);
             break;
         case 8:
-            trySetRateAttribute(MM::Player::RateStatus::RATE_8);
+            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_8);
             break;
         case 16:
-            trySetRateAttribute(MM::Player::RateStatus::RATE_16);
+            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_16);
             break;
     }
 
@@ -80,151 +80,151 @@ void PlayerStubImpl::initializeDefaultValues() {
 
     /* Playback status */
     if (m_player->isPlaying)
-        trySetPlaybackStatusAttribute (MM::Player::PlaybackStatus::PLAYING);
+        trySetPlaybackStatusAttribute (MM::PlayerTypes::PlaybackStatus::PLAYING);
     else
-        trySetPlaybackStatusAttribute (MM::Player::PlaybackStatus::PAUSED);
+        trySetPlaybackStatusAttribute (MM::PlayerTypes::PlaybackStatus::PAUSED);
 
     /* Play position */
     trySetPositionAttribute (UINT64_MAX - 1);
 }
 
-void PlayerStubImpl::next(MM::Player::PlayerError& e) {
+void PlayerStubImpl::next(MM::PlayerTypes::PlayerError& e) {
     MmError *error = NULL;
 
     m_player->next(&error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
     }
 }
 
-void PlayerStubImpl::openUri(std::string uri, MM::Player::PlayerError& e) {
+void PlayerStubImpl::openUri(std::string uri, MM::PlayerTypes::PlayerError& e) {
     MmError *error = NULL;
 
     m_player->openURI(uri, &error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
     }
 }
 
-void PlayerStubImpl::openPlaylist(std::string uri, MM::Player::PlayerError& e){
+void PlayerStubImpl::openPlaylist(std::string uri, MM::PlayerTypes::PlayerError& e){
     MmError *error = new MmError("");
     m_player->openPlaylist(uri, &error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::pause(MM::Player::PlayerError& e){
+void PlayerStubImpl::pause(MM::PlayerTypes::PlayerError& e){
     MmError *error = NULL;
     m_player->pause(&error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::play(MM::Player::PlayerError& e){
+void PlayerStubImpl::play(MM::PlayerTypes::PlayerError& e){
     MmError *error = NULL;
     m_player->play(&error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::playPause(MM::Player::PlayerError& e){
+void PlayerStubImpl::playPause(MM::PlayerTypes::PlayerError& e){
     MmError *error = NULL;
     m_player->playPause(&error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::previous(MM::Player::PlayerError& e){
+void PlayerStubImpl::previous(MM::PlayerTypes::PlayerError& e){
     MmError *error = NULL;
 
     m_player->previous(&error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
     }
 }
 
-void PlayerStubImpl::seek(int64_t pos, MM::Player::PlayerError& e){
+void PlayerStubImpl::seek(int64_t pos, MM::PlayerTypes::PlayerError& e){
     MmError *error = NULL;
     m_player->seek(pos, &error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::setPosition(uint64_t pos, MM::Player::PlayerError& e){
+void PlayerStubImpl::setPosition(uint64_t pos, MM::PlayerTypes::PlayerError& e){
     MmError *error = NULL;
     m_player->setPosition(pos, &error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::stop(MM::Player::PlayerError& e){
+void PlayerStubImpl::stop(MM::PlayerTypes::PlayerError& e){
     MmError *error = NULL;
     m_player->stop(&error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::enqueueUri(std::string uri, MM::Player::PlayerError& e) {
+void PlayerStubImpl::enqueueUri(std::string uri, MM::PlayerTypes::PlayerError& e) {
     MmError *error = NULL;
     m_player->enqueueUri (uri, &error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::dequeueIndex(uint64_t pos, MM::Player::PlayerError& e) {
+void PlayerStubImpl::dequeueIndex(uint64_t pos, MM::PlayerTypes::PlayerError& e) {
     MmError *error = NULL;
     m_player->dequeueIndex (pos, &error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::dequeueAll(MM::Player::PlayerError& e) {
+void PlayerStubImpl::dequeueAll(MM::PlayerTypes::PlayerError& e) {
     MmError *error = NULL;
     m_player->dequeueAll (&error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
-void PlayerStubImpl::getCurrentPlayQueue(std::string& playQueue, MM::Player::PlayerError& e) {
+void PlayerStubImpl::getCurrentPlayQueue(std::string& playQueue, MM::PlayerTypes::PlayerError& e) {
     MmError *error = NULL;
     std::string queue;
     m_player->getCurrentPlayQueue (playQueue, &error);
 
     if (error) {
-        e = MM::Player::PlayerError::BACKEND_UNREACHABLE;
+        e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
@@ -236,38 +236,38 @@ const uint64_t& PlayerStubImpl::getPositionAttribute(const std::shared_ptr<Commo
 
 void PlayerStubImpl::onRemoteRateAttributeChanged() {
     std::cout << "Remote has updated Rate attribute" << std::endl;
-    MM::Player::RateStatus rate = getRateAttribute();
+    MM::PlayerTypes::RateStatus rate = getRateAttribute();
     int rateInt = 1;
 
     switch (rate) {
-        case MM::Player::RateStatus::RATE_NEG_16:
+        case MM::PlayerTypes::RateStatus::RATE_NEG_16:
             rateInt = -16;
             break;
-        case MM::Player::RateStatus::RATE_NEG_8:
+        case MM::PlayerTypes::RateStatus::RATE_NEG_8:
             rateInt = -8;
             break;
-        case MM::Player::RateStatus::RATE_NEG_4:
+        case MM::PlayerTypes::RateStatus::RATE_NEG_4:
             rateInt = -4;
             break;
-        case MM::Player::RateStatus::RATE_NEG_2:
+        case MM::PlayerTypes::RateStatus::RATE_NEG_2:
             rateInt = -2;
             break;
-        case MM::Player::RateStatus::RATE_NEG_1:
+        case MM::PlayerTypes::RateStatus::RATE_NEG_1:
             rateInt = -1;
             break;
-        case MM::Player::RateStatus::RATE_1:
+        case MM::PlayerTypes::RateStatus::RATE_1:
             rateInt = 1;
             break;
-        case MM::Player::RateStatus::RATE_2:
+        case MM::PlayerTypes::RateStatus::RATE_2:
             rateInt = 2;
             break;
-        case MM::Player::RateStatus::RATE_4:
+        case MM::PlayerTypes::RateStatus::RATE_4:
             rateInt = 4;
             break;
-        case MM::Player::RateStatus::RATE_8:
+        case MM::PlayerTypes::RateStatus::RATE_8:
             rateInt = 8;
             break;
-        case MM::Player::RateStatus::RATE_16:
+        case MM::PlayerTypes::RateStatus::RATE_16:
             rateInt = 16;
             break;
     }
@@ -282,7 +282,7 @@ void PlayerStubImpl::onRemoteRepeatAttributeChanged() {
 void PlayerStubImpl::onRemoteShuffleAttributeChanged() {
     std::cout << "Remote has updated shuffle attribute" << std::endl;
 
-    if (getShuffleAttribute() == MM::Player::ShuffleStatus::SHUFFLE)
+    if (getShuffleAttribute() == MM::PlayerTypes::ShuffleStatus::SHUFFLE)
         m_player->setShuffle(true);
     else
         m_player->setShuffle(false);

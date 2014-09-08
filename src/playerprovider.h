@@ -26,7 +26,7 @@
 #include "serviceprovider.h"
 #include "dleyna-renderer-generated.h"
 #include "dleyna-generated.h"
-#include "../src-gen/org/genivi/MediaManager/PlayerStubDefault.h"
+#include "../src-gen/org/genivi/mediamanager/PlayerStubDefault.h"
 
 class PlayerProvider : public ServiceProvider {
 friend class PlayerStubImpl;
@@ -42,7 +42,7 @@ public:
     void next (MmError **e);
     void previous (MmError **e);
     void setRate (double rate, MmError **e);
-    void setRepeat (org::genivi::MediaManager::Player::RepeatStatus);
+    void setRepeat (org::genivi::mediamanager::PlayerTypes::RepeatStatus);
     void setShuffle (bool);
     void stop (MmError **e);
     void setPosition (uint64_t pos, MmError **e);
@@ -54,7 +54,7 @@ public:
     void getCurrentPlayQueue (std::string &queue, MmError **e);
 
     void handlePropertyChangedSignal (std::string, GVariant *);
-    org::genivi::MediaManager::PlayerStubDefault *stub;
+    org::genivi::mediamanager::PlayerStubDefault *stub;
 private:
 dleynaRendererMediaPlayer2Player *mp;
 dleynaServerMediaContainer2      *mc;
@@ -63,7 +63,7 @@ uint64_t playQueuePosition;
 json_t *playqueue;
 bool isPlaying;
 guint m_signalHandlerId;
-org::genivi::MediaManager::Player::RepeatStatus m_repeat;
+org::genivi::mediamanager::PlayerTypes::RepeatStatus m_repeat;
 bool m_shuffle;
 bool m_muted;
 double m_playrate;

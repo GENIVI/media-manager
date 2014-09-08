@@ -78,8 +78,8 @@ int main (int argc, char *argv[]) {
     lms.connect([&](MmError *e) {
         registerService<IndexerStubImpl, LMSProvider> (runtime,
                                           &lms,
-                                          "local:org.genivi.MediaManager.Indexer:"
-                                          "org.genivi.MediaManager.Indexer",
+                                          "local:org.genivi.mediamanager.Indexer:"
+                                          "org.genivi.mediamanager.Indexer",
                                           "Indexer",
                                           e);
     });
@@ -87,8 +87,8 @@ int main (int argc, char *argv[]) {
     browser.connect([&](MmError *e) {
         registerService<BrowserStubImpl, BrowserProvider> (runtime,
                                           &browser,
-                                          "local:org.genivi.MediaManager.Browser:"
-                                          "org.genivi.MediaManager.Browser",
+                                          "local:org.genivi.mediamanager.Browser:"
+                                          "org.genivi.mediamanager.Browser",
                                           "Browser",
                                           e);
     });
@@ -96,8 +96,8 @@ int main (int argc, char *argv[]) {
     player.connect([&](MmError *e) {
         registerService<PlayerStubImpl, PlayerProvider> (runtime,
                                           &player,
-                                          "local:org.genivi.MediaManager.Player:"
-                                          "org.genivi.MediaManager.Player",
+                                          "local:org.genivi.mediamanager.Player:"
+                                          "org.genivi.mediamanager.Player",
                                           "Player",
                                           e);
     });

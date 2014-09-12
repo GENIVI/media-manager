@@ -1,0 +1,3 @@
+ACTION=="add", KERNEL=="sdb*", RUN+="/usr/bin/mkdir -p /mnt/%k"
+ACTION=="add", KERNEL=="sdb*", RUN+="/usr/bin/mount /dev/%k /mnt/%k"
+ACTION=="remove", KERNEL=="sdb*", RUN+="/usr/bin/umount --lazy --force /mnt/%k"

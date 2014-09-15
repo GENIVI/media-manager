@@ -108,7 +108,7 @@ void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
     filter.push_back("*");
 
     int offset = 0;
-    int count = 100;
+    int count = 100000;
     gchar **filterStrv = stdStrvToStrv(filter);
 
     if (!PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
@@ -214,8 +214,6 @@ void PlayerProvider::handlePropertyChangedSignal (std::string key, GVariant *val
     }
 
     if (key == "PlaybackStatus") {
-        std::cout << "Key: " << key << std::endl;
-        std::cout << "Value: " << g_variant_get_string (value, NULL) << std::endl;
         if (g_strcmp0(g_variant_get_string(value,NULL), "Playing") == 0)
             this->stub->setPlaybackStatusAttribute(org::genivi::mediamanager::PlayerTypes::PlaybackStatus::PLAYING);
         else if (g_strcmp0(g_variant_get_string(value,NULL), "Paused") == 0)
@@ -226,8 +224,13 @@ void PlayerProvider::handlePropertyChangedSignal (std::string key, GVariant *val
             std::cout << "Unhandled playback state" << std::endl;
         }
     } else if (key == "Metadata") {
-        std::cout << "Key: " << key << std::endl;
         this->stub->setCurrentTrackAttribute(playQueuePosition);
+    } else if (key == "CanPlay") {
+        this->stub->setCanPlayAttribute(g_variant_get_boolean (value));
+    } else if (key == "CanPause") {
+        this->stub->setCanPauseAttribute(g_variant_get_boolean (value));
+    } else if (key == "CanSeek") {
+        this->stub->setCanSeekAttribute(g_variant_get_boolean (value));
     } else {
         std::cout << "Unhandled key: " << key << std::endl;
     }
@@ -564,7 +567,7 @@ bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
                 std::cout << "Repeat is enabled, resetting play queue position to 0" << std::endl;
                 newPlayQueuePosition = 0;
             } else {
-                std::cout << "Repeat disabled. Pausiong playback" << std::endl;
+                std::cout << "Repeat disabled. Pausing playback" << std::endl;
                 return false;
             }
         }

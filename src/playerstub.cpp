@@ -36,7 +36,7 @@ void PlayerStubImpl::initializeDefaultValues() {
        trySetShuffleAttribute(MM::PlayerTypes::ShuffleStatus::UNSHUFFLE);
 
     /* Repeat */
-    setRepeatAttribute (m_player->m_repeat);
+    trySetRepeatAttribute (m_player->m_repeat);
 
     /* Rate */
     switch ((int) m_player->m_playrate) {

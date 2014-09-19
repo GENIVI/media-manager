@@ -42,7 +42,7 @@ void LMSProvider::getDatabasePath (std::string &database_path, MmError **e) {
                                      NULL,
                                      &error);
     if (error) {
-        if (e)
+        if (e && *e)
             (*e) = new MmError(error->message);
         g_error ("%s\n", error->message);
     }
@@ -75,7 +75,7 @@ void LMSProvider::startIndexing (MmError **e) {
                                      NULL,
                                      &error);
     if (error) {
-        if (e)
+        if (e && *e)
             *e = new MmError(error->message);
         g_warning ("%s\n", error->message);
     }
@@ -99,7 +99,7 @@ void LMSProvider::stopIndexing (MmError **e) {
                                      NULL,
                                      &error);
     if (error) {
-        if (e)
+        if (e && *e)
             *e = new MmError(error->message);
         g_warning ("D-Bus error: %s\n", error->message);
     }

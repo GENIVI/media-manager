@@ -41,6 +41,21 @@ public:
                           uint64_t count,
                           std::vector<std::string> filter,
                           MM::BrowserTypes::SortKey sortKey,
+                          std::string& children,
+                          MM::BrowserTypes::BrowserError& e);
+
+    void listChildren(std::string path,
+                                uint64_t offset,
+                                uint64_t count,
+                                std::vector<std::string> filter,
+                                std::string& children,
+                                MM::BrowserTypes::BrowserError& e);
+
+    void listChildrenEx(std::string path,
+                          uint64_t offset,
+                          uint64_t count,
+                          std::vector<std::string> filter,
+                          MM::BrowserTypes::SortKey sortKey,
                           std::string& containers,
                           MM::BrowserTypes::BrowserError& e);
 

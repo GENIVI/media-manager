@@ -149,10 +149,13 @@ bool PlayerProvider::connectMediaPlayer (const std::string path,
     if (!g_variant_is_object_path (foundpath)) {
         std::string error = "Path is invalid";
         std::cout << error << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error;
         return false;
     }
+
+    if (*mp)
+        g_object_unref (*mp);
 
     *mp = dleyna_renderer_media_player2_player_proxy_new_for_bus_sync (
                                     G_BUS_TYPE_SESSION,
@@ -163,7 +166,7 @@ bool PlayerProvider::connectMediaPlayer (const std::string path,
                                     &error);
     if (error) {
         std::cout << "Error creating MediaPlayer2 proxy: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return false;
     }
@@ -274,7 +277,7 @@ bool PlayerProvider::connectMediaContainer (const std::string path,
     if (!g_variant_is_object_path (path.c_str())) {
         std::string error = "Path is invalid";
         std::cout << error << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error;
         return false;
     }
@@ -289,7 +292,7 @@ bool PlayerProvider::connectMediaContainer (const std::string path,
                                     &error);
     if (error) {
         std::cout << "Error creating MediaContainer2 proxy: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return false;
     }
@@ -305,7 +308,7 @@ bool PlayerProvider::connectMediaObject (const std::string path,
     if (!g_variant_is_object_path (path.c_str())) {
         std::string error = "Path is invalid";
         std::cout << error << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error;
         return false;
     }
@@ -320,7 +323,7 @@ bool PlayerProvider::connectMediaObject (const std::string path,
                                     &error);
     if (error) {
         std::cout << "Error creating MediaContainer2 proxy: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return false;
     }
@@ -484,6 +487,33 @@ uint64_t PlayerProvider::getPosition (MmError **e) {
     return 0;
 }
 
+uint64_t PlayerProvider::getDuration (MmError **e) {
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError *error = NULL;
+    GVariant *duration = NULL;
+    GVariant *metadata = NULL;
+    uint64_t currentDuration = 0;
+
+    if (!PlayerProvider::connectMediaPlayer(PLAYER_PATH, &mp, e))
+        return 0;
+
+    metadata = dleyna_renderer_media_player2_player_get_metadata (mp);
+
+    duration = g_variant_lookup_value (metadata, "mpris:length", G_VARIANT_TYPE_INT64);
+
+    if (duration != NULL) {
+        int64_t d = g_variant_get_int64(duration);
+        if (d > 0)
+            currentDuration = d;
+    } else {
+        std::cout << "mpris:length not a member of Metadata struct" << std::endl;
+    }
+
+    checkError (error, e);
+
+    return currentDuration;
+}
+
 void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                          *error = NULL;
@@ -496,6 +526,11 @@ void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
 
     if (!PlayerProvider::connectMediaObject(uri, &mo, e))
         return;
+
+    if (!playqueue) {
+        std::cout << "Initializing new play queue" << std::endl;
+        playqueue = json_array();
+    }
 
     const char *parent = dleyna_server_media_object2_get_parent (mo);
     if (!parent) {

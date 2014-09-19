@@ -52,6 +52,38 @@ void BrowserStubImpl::listContainers(std::string path,
                               NULL);
 }
 
+void BrowserStubImpl::listChildrenEx(std::string path,
+                                       uint64_t offset,
+                                       uint64_t count,
+                                       std::vector<std::string> filter,
+                                       MM::BrowserTypes::SortKey sortKey,
+                                       std::string& children,
+                                       MM::BrowserTypes::BrowserError& e) {
+
+    m_browser->listChildrenEx(path,
+                              offset,
+                              count,
+                              filter,
+                              sortKeyToString(sortKey),
+                              children,
+                              NULL);
+}
+
+void BrowserStubImpl::listChildren(std::string path,
+                                   uint64_t offset,
+                                   uint64_t count,
+                                   std::vector<std::string> filter,
+                                   std::string& children,
+                                   MM::BrowserTypes::BrowserError& e) {
+
+    m_browser->listChildren(path,
+                            offset,
+                            count,
+                            filter,
+                            children,
+                            NULL);
+}
+
 void BrowserStubImpl::listContainersEx(std::string path,
                                        uint64_t offset,
                                        uint64_t count,

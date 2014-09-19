@@ -44,6 +44,12 @@ json_t * DLNADictToJSON (GVariant *element) {
         return json_boolean(g_variant_get_boolean (element));
     } else if (g_variant_type_equal (elementType, G_VARIANT_TYPE_UINT32)) {
         return json_integer(g_variant_get_uint32 (element));
+    } else if (g_variant_type_equal (elementType, G_VARIANT_TYPE_INT32)) {
+        return json_integer(g_variant_get_int32 (element));
+    } else if (g_variant_type_equal (elementType, G_VARIANT_TYPE_UINT64)) {
+        return json_integer(g_variant_get_uint64 (element));
+    } else if (g_variant_type_equal (elementType, G_VARIANT_TYPE_INT64)) {
+        return json_integer(g_variant_get_int64 (element));
     } else if (g_variant_type_equal (elementType, G_VARIANT_TYPE_VARIANT)) {
         GVariant *key   = NULL;
         key = g_variant_get_child_value (element, 0);
@@ -62,7 +68,7 @@ void DLNAStringify(const json_t *object,
     if (!json) {
         std::string error = "JSON builder returned null!";
         std::cout << error << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error;
         return;
     }
@@ -115,7 +121,7 @@ bool pathIsMediaManager(std::string type, std::string path, MmError **e) {
                                    &error);
 
     if (error) {
-        if (e)
+        if (e && *e)
             (*e)->message = "Unable to create proxy";
         return false;
     }
@@ -131,7 +137,7 @@ bool pathIsMediaManager(std::string type, std::string path, MmError **e) {
                                             &error);
 
     if (error) {
-        if (e)
+        if (e && *e)
             (*e)->message = "Unable to get property for " + path;
         return false;
     }
@@ -183,7 +189,7 @@ std::vector<std::string> discoverDLNABackends(std::string type,
     }
 
     if (error) {
-        if (e)
+        if (e && *e)
             (*e)->message = "Unable to get connection to bus";
         return result;
     }
@@ -198,7 +204,7 @@ std::vector<std::string> discoverDLNABackends(std::string type,
                                    &error);
 
     if (error) {
-        if (e)
+        if (e && *e)
             (*e)->message = "Unable to create proxy";
         return result;
     }
@@ -223,7 +229,7 @@ std::vector<std::string> discoverDLNABackends(std::string type,
     }
 
     if (error) {
-        if (e)
+        if (e && *e)
             (*e)->message = "Unable to get servers from dLeyna";
     }
 

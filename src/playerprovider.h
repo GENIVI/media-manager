@@ -47,6 +47,7 @@ public:
     void stop (MmError **e);
     void setPosition (uint64_t pos, MmError **e);
     uint64_t getPosition (MmError **e);
+    uint64_t getDuration (MmError **e);
     void seek (uint64_t pos, MmError **e);
     void enqueueUri (std::string uri, MmError **e);
     void dequeueIndex (uint64_t idx, MmError **e);

@@ -51,6 +51,21 @@ public:
                           std::string& containers,
                           MmError **e);
 
+    void listChildren(std::string path,
+                      uint64_t offset,
+                      uint64_t count,
+                      std::vector<std::string> filter,
+                      std::string& containers,
+                      MmError **e);
+
+    void listChildrenEx(std::string path,
+                        uint64_t offset,
+                        uint64_t count,
+                        std::vector<std::string> filter,
+                        std::string sortKey,
+                        std::string& containers,
+                        MmError **e);
+
     void listItems(std::string path,
                    uint64_t offset,
                    uint64_t count,
@@ -116,6 +131,14 @@ private:
                                 std::string& containers,
                                 std::string sortKey,
                                 MmError **e);
+
+    void listChildrenGeneral (std::string path,
+                              uint64_t offset,
+                              uint64_t count,
+                              std::vector<std::string> filter,
+                              std::string& containers,
+                              std::string sortKey,
+                              MmError **e);
 
     void searchObjectsGeneral(std::string path,
                               std::string query,

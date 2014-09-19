@@ -89,22 +89,24 @@ void PlayerStubImpl::initializeDefaultValues() {
 }
 
 void PlayerStubImpl::next(MM::PlayerTypes::PlayerError& e) {
-    MmError *error = NULL;
+    MmError *error = new MmError("");
 
     m_player->next(&error);
 
     if (error) {
         e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
     }
 }
 
 void PlayerStubImpl::openUri(std::string uri, MM::PlayerTypes::PlayerError& e) {
-    MmError *error = NULL;
+    MmError *error = new MmError("");
 
     m_player->openURI(uri, &error);
 
     if (error) {
         e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
     }
 }
 
@@ -119,7 +121,7 @@ void PlayerStubImpl::openPlaylist(std::string uri, MM::PlayerTypes::PlayerError&
 }
 
 void PlayerStubImpl::pause(MM::PlayerTypes::PlayerError& e){
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->pause(&error);
 
     if (error) {
@@ -129,7 +131,7 @@ void PlayerStubImpl::pause(MM::PlayerTypes::PlayerError& e){
 }
 
 void PlayerStubImpl::play(MM::PlayerTypes::PlayerError& e){
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->play(&error);
 
     if (error) {
@@ -139,7 +141,7 @@ void PlayerStubImpl::play(MM::PlayerTypes::PlayerError& e){
 }
 
 void PlayerStubImpl::playPause(MM::PlayerTypes::PlayerError& e){
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->playPause(&error);
 
     if (error) {
@@ -149,17 +151,18 @@ void PlayerStubImpl::playPause(MM::PlayerTypes::PlayerError& e){
 }
 
 void PlayerStubImpl::previous(MM::PlayerTypes::PlayerError& e){
-    MmError *error = NULL;
+    MmError *error = new MmError("");
 
     m_player->previous(&error);
 
     if (error) {
         e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
+        free (error);
     }
 }
 
 void PlayerStubImpl::seek(int64_t pos, MM::PlayerTypes::PlayerError& e){
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->seek(pos, &error);
 
     if (error) {
@@ -169,7 +172,7 @@ void PlayerStubImpl::seek(int64_t pos, MM::PlayerTypes::PlayerError& e){
 }
 
 void PlayerStubImpl::setPosition(uint64_t pos, MM::PlayerTypes::PlayerError& e){
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->setPosition(pos, &error);
 
     if (error) {
@@ -179,7 +182,7 @@ void PlayerStubImpl::setPosition(uint64_t pos, MM::PlayerTypes::PlayerError& e){
 }
 
 void PlayerStubImpl::stop(MM::PlayerTypes::PlayerError& e){
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->stop(&error);
 
     if (error) {
@@ -189,17 +192,18 @@ void PlayerStubImpl::stop(MM::PlayerTypes::PlayerError& e){
 }
 
 void PlayerStubImpl::enqueueUri(std::string uri, MM::PlayerTypes::PlayerError& e) {
-    MmError *error = NULL;
+    MmError *error = new MmError();
     m_player->enqueueUri (uri, &error);
 
     if (error) {
+        std::cout << "Error in " << __FUNCTION__ << " " << error->message << std::endl;
         e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);
     }
 }
 
 void PlayerStubImpl::dequeueIndex(uint64_t pos, MM::PlayerTypes::PlayerError& e) {
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->dequeueIndex (pos, &error);
 
     if (error) {
@@ -209,7 +213,7 @@ void PlayerStubImpl::dequeueIndex(uint64_t pos, MM::PlayerTypes::PlayerError& e)
 }
 
 void PlayerStubImpl::dequeueAll(MM::PlayerTypes::PlayerError& e) {
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     m_player->dequeueAll (&error);
 
     if (error) {
@@ -219,7 +223,7 @@ void PlayerStubImpl::dequeueAll(MM::PlayerTypes::PlayerError& e) {
 }
 
 void PlayerStubImpl::getCurrentPlayQueue(std::string& playQueue, MM::PlayerTypes::PlayerError& e) {
-    MmError *error = NULL;
+    MmError *error = new MmError("");
     std::string queue;
     m_player->getCurrentPlayQueue (playQueue, &error);
 
@@ -232,6 +236,11 @@ void PlayerStubImpl::getCurrentPlayQueue(std::string& playQueue, MM::PlayerTypes
 const uint64_t& PlayerStubImpl::getPositionAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId) {
     pos = m_player->getPosition(NULL);
     return pos;
+}
+
+const uint64_t& PlayerStubImpl::getDurationAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId) {
+    duration = m_player->getDuration(NULL);
+    return duration;
 }
 
 void PlayerStubImpl::onRemoteRateAttributeChanged() {

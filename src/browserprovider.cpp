@@ -46,13 +46,56 @@ void BrowserProvider::listContainersGeneral (std::string path,
 
     if (error) {
         std::cout << "Error in listContainers D-Bus call: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return;
     }
 
     object = DLNADictToJSON (out);
     DLNAStringify(object, containers, e);
+
+    for (uint i = 0; i < filter.size(); i++) {
+        free (filterStrv[i]);
+    }
+}
+
+void BrowserProvider::listChildrenGeneral (std::string path,
+                                           uint64_t offset,
+                                           uint64_t count,
+                                           std::vector<std::string> filter,
+                                           std::string& children,
+                                           std::string sortKey,
+                                           MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    GError                *error  = NULL;
+    GVariant              *out    = NULL;
+    json_t                *object = NULL;
+    dleynaServerMediaContainer2 *mc     = NULL;
+
+    gchar **filterStrv = stdStrvToStrv(filter);
+
+    if (!BrowserProvider::connectMediaContainer(path, &mc, e))
+        return;
+
+    if (sortKey == "")
+        dleyna_server_media_container2_call_list_children_sync (mc, offset, count,
+                                                           filterStrv, &out, NULL,
+                                                           &error);
+    else
+        dleyna_server_media_container2_call_list_children_ex_sync (mc, offset, count,
+                                                           filterStrv, sortKey.c_str(), &out, NULL,
+                                                           &error);
+
+    if (error) {
+        std::cout << "Error in listChildren D-Bus call: " << error->message << std::endl;
+        if (e && *e)
+            (*e)->message = error->message;
+        return;
+    }
+
+    object = DLNADictToJSON (out);
+    DLNAStringify(object, children, e);
 
     for (uint i = 0; i < filter.size(); i++) {
         free (filterStrv[i]);
@@ -80,6 +123,29 @@ void BrowserProvider::listContainersEx(std::string path,
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     listContainersGeneral(path, offset, count, filter, containers, sortKey, e);
+}
+
+void BrowserProvider::listChildren(std::string path,
+                                   uint64_t offset,
+                                   uint64_t count,
+                                   std::vector<std::string> filter,
+                                   std::string& containers,
+                                   MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    listChildrenGeneral(path, offset, count, filter, containers, "", e);
+}
+
+void BrowserProvider::listChildrenEx(std::string path,
+                                     uint64_t offset,
+                                     uint64_t count,
+                                     std::vector<std::string> filter,
+                                     std::string sortKey,
+                                     std::string& containers,
+                                     MmError **e)
+{
+    std::cout << "In function: " << __FUNCTION__ << std::endl;
+    listChildrenGeneral(path, offset, count, filter, containers, sortKey, e);
 }
 
 void BrowserProvider::listItemsGeneral (std::string path,
@@ -112,7 +178,7 @@ void BrowserProvider::listItemsGeneral (std::string path,
 
     if (error) {
         std::cout << "Error in listItems D-Bus call: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return;
     }
@@ -165,7 +231,7 @@ void BrowserProvider::createReference(std::string path,
 
     if (error) {
         std::cout << "Error in createReference D-Bus call: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return;
     }
@@ -194,7 +260,7 @@ void BrowserProvider::createContainer(std::string path,
 
     if (error) {
         std::cout << "Error in createContainer D-Bus call: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return;
     }
@@ -244,7 +310,7 @@ void BrowserProvider::searchObjectsGeneral(std::string path,
 
     if (error) {
         std::cout << "Error in searchObjects D-Bus call: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return;
     }
@@ -290,7 +356,7 @@ bool BrowserProvider::connectMediaContainer (const std::string path,
     if (!g_variant_is_object_path (path.c_str())) {
         std::string error = "Path is invalid";
         std::cout << error << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error;
         return false;
     }
@@ -305,7 +371,7 @@ bool BrowserProvider::connectMediaContainer (const std::string path,
                                     &error);
     if (error) {
         std::cout << "Error creating MediaContainer2 proxy: " << error->message << std::endl;
-        if (e)
+        if (e && *e)
             (*e)->message = error->message;
         return false;
     }

@@ -9,6 +9,10 @@
 
 class MmError {
 public:
+MmError () {
+    this->message = "";
+}
+
 MmError (std::string msg) {
     this->message = msg;
 }

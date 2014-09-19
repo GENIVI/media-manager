@@ -46,6 +46,7 @@ public:
     virtual void getCurrentPlayQueue(std::string& playQueue, MM::PlayerTypes::PlayerError& e);
 
     const uint64_t& getPositionAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
+    const uint64_t& getDurationAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
 
     virtual void onRemoteRateAttributeChanged();
     virtual void onRemoteRepeatAttributeChanged();
@@ -54,6 +55,7 @@ public:
 private:
     PlayerProvider *m_player;
     uint64_t pos;
+    uint64_t duration;
 };
 
 #endif /* PLAYERSTUB_H */

@@ -1,8 +1,3 @@
-TODO
-----
-* Add the correct paths to clone each repository
-* Add more tutorial sections for the extension
-
 Overview
 --------
 This is the documentation for the core component of the Media Manager project.

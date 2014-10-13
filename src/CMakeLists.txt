@@ -36,7 +36,7 @@ SET (HEADERS
 
 ADD_CUSTOM_COMMAND (OUTPUT ${GENERATED_SOURCES_CAPI} ${GENERATED_HEADERS_CAPI}
                     COMMAND git submodule init &&
-                            git submodule update)
+                    git submodule update)
 
 ADD_EXECUTABLE (media-manager
                 ${SOURCES}

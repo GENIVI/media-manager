@@ -3,7 +3,7 @@
 
 #include "jansson.h"
 
-#include <org/genivi/MediaManager/PlayerProxy.h>
+#include <org/genivi/mediamanager/PlayerProxy.h>
 #include "common.h"
 
 class PlayerCommonAPITest : public ::testing::Test {
@@ -21,8 +21,8 @@ protected:
             std::cerr << "Error: Unable to create factory!\n";
             return false;
         }
-        const std::string commonApiAddress = "local:org.genivi.MediaManager.Player:org.genivi.MediaManager.Player";
-        playerProxy = factory->buildProxy<org::genivi::MediaManager::PlayerProxy>(commonApiAddress);
+        const std::string commonApiAddress = "local:org.genivi.mediamanager.Player:org.genivi.mediamanager.Player";
+        playerProxy = factory->buildProxy<org::genivi::mediamanager::PlayerProxy>(commonApiAddress);
         if (!playerProxy) {
             std::cerr << "Error: Unable to build player proxy!\n";
             return false;
@@ -52,7 +52,7 @@ protected:
 
     virtual void TearDown() {
     }
-    std::shared_ptr<org::genivi::MediaManager::PlayerProxy<> > playerProxy;
+    std::shared_ptr<org::genivi::mediamanager::PlayerProxy<> > playerProxy;
 };
 
 TEST_F(PlayerCommonAPITest, Connect) {
@@ -61,26 +61,26 @@ TEST_F(PlayerCommonAPITest, Connect) {
 
 TEST_F(PlayerCommonAPITest, OpenURITest) {
     CommonAPI::CallStatus callStatus;
-    org::genivi::MediaManager::Player::PlayerError error;
+    org::genivi::mediamanager::PlayerTypes::PlayerError error;
 
     playerProxy->openUri ("file:///some-file", callStatus, error);
-    ASSERT_TRUE (error == org::genivi::MediaManager::Player::PlayerError::NO_ERROR);
+    ASSERT_TRUE (error == org::genivi::mediamanager::PlayerTypes::PlayerError::NO_ERROR);
 }
 
 TEST_F(PlayerCommonAPITest, PlayTest) {
     CommonAPI::CallStatus callStatus;
-    org::genivi::MediaManager::Player::PlayerError error;
+    org::genivi::mediamanager::PlayerTypes::PlayerError error;
 
     playerProxy->play(callStatus, error);
-    ASSERT_TRUE (error == org::genivi::MediaManager::Player::PlayerError::NO_ERROR);
+    ASSERT_TRUE (error == org::genivi::mediamanager::PlayerTypes::PlayerError::NO_ERROR);
 }
 
 TEST_F(PlayerCommonAPITest, PauseTest) {
     CommonAPI::CallStatus callStatus;
-    org::genivi::MediaManager::Player::PlayerError error;
+    org::genivi::mediamanager::PlayerTypes::PlayerError error;
 
     playerProxy->pause(callStatus, error);
-    ASSERT_TRUE (error == org::genivi::MediaManager::Player::PlayerError::NO_ERROR);
+    ASSERT_TRUE (error == org::genivi::mediamanager::PlayerTypes::PlayerError::NO_ERROR);
 }
 
 int main(int argc, char **argv) {

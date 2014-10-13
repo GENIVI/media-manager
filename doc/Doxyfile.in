@@ -1,0 +1,9 @@
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/doc
+RECURSIVE              = YES
+PROJECT_NAME           = "GENIVI Media Manager PoC"
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/doc/frontmatter.md
+INPUT                 += @CMAKE_CURRENT_SOURCE_DIR@/src
+USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/doc/frontmatter.md
+HTML_EXTRA_FILES      += @CMAKE_CURRENT_SOURCE_DIR@/doc/architecture.png
+
+

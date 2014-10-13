@@ -1,15 +1,15 @@
-/**
-  * Copyright (C) 2014, Jaguar Land Rover
-  *
-  * Author: Jonatan Palsson <jonatan.palsson@pelagicore.com>
-  *
-  * This file is part of the GENIVI Media Manager Proof-of-Concept
-  * For further information, see http://genivi.org/
-  *
-  * This Source Code Form is subject to the terms of the Mozilla Public
-  * License, v. 2.0. If a copy of the MPL was not distributed with this
-  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-  */
+/*
+ * Copyright (C) 2014, Jaguar Land Rover
+ *
+ * Author: Jonatan Palsson <jonatan.palsson@pelagicore.com>
+ *
+ * This file is part of the GENIVI Media Manager Proof-of-Concept
+ * For further information, see http://genivi.org/
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 
 #ifndef PLAYERSTUB_H
 #define PLAYERSTUB_H
@@ -22,6 +22,17 @@
 
 namespace MM = org::genivi::mediamanager;
 
+/**
+ * \brief Conversion layer between CommonAPI and internal API
+ *
+ * This class is undocumented, since it only provides a conversion
+ * layer
+ * between the auto-generated Franca functions (documented in the Player.fidl
+ * file) and the Media Manager internal API, which is documented in the
+ * PlayerProvider class
+ *
+ * @see PlayerProvider
+ */
 class PlayerStubImpl: public org::genivi::mediamanager::PlayerStubDefault {
 
 public:

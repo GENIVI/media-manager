@@ -1,4 +1,4 @@
- /**
+ /*
   * Copyright (C) 2014, Jaguar Land Rover
   *
   * Author: Jonatan Palsson <jonatan.palsson@pelagicore.com>

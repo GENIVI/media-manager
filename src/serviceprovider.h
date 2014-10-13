@@ -23,16 +23,44 @@
 
 #include "common.h"
 
+/**
+ * Common base class for service providers connecting to services over D-Bus.
+ */
 class ServiceProvider {
 
 public:
     ServiceProvider(std::string);
     ~ServiceProvider();
 
-    bool connect(std::function<void(MmError *e)>);
-    bool isConnected();
-    bool checkError (GError *, MmError**);
+    /**
+     * Connect to the D-Bus service of the backend service
+     *
+     * @param cb Callback to use for reporting success or failure when
+     *           connecting
+     */
+    bool connect(std::function<void(MmError *e)> cb);
 
+    /**
+     * Determine is service provider is connected to backend service
+     *
+     * @return true if we're connected
+     * @return false if we're not connected
+     */
+    bool isConnected();
+
+    /**
+     * Check if GError object is set. Convert to MmError if set.
+     *
+     * @param gerror GError to check
+     * @param mmerror MmError to set of gerror is non-null
+     * @return true if mmerror is set
+     * @return false if mmerror is not set
+     */
+    bool checkError (GError * gerror, MmError** mmerror);
+
+    /**
+     * Disconnect from backend service
+     */
     void disconnect();
 
     unsigned int m_watcherId;

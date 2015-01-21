@@ -39,23 +39,7 @@ void PlayerStubImpl::initializeDefaultValues() {
     trySetRepeatAttribute (m_player->m_repeat);
 
     /* Rate */
-    switch ((int) m_player->m_playrate) {
-        case 1:
-            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_1);
-            break;
-        case 2:
-            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_2);
-            break;
-        case 4:
-            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_4);
-            break;
-        case 8:
-            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_8);
-            break;
-        case 16:
-            trySetRateAttribute(MM::PlayerTypes::RateStatus::RATE_16);
-            break;
-    }
+    trySetRateAttribute(m_player->m_playrate);
 
     /* Volume */
     trySetVolumeAttribute (m_player->m_volume);
@@ -245,43 +229,13 @@ const uint64_t& PlayerStubImpl::getDurationAttribute(const std::shared_ptr<Commo
 
 void PlayerStubImpl::onRemoteRateAttributeChanged() {
     std::cout << "Remote has updated Rate attribute" << std::endl;
-    MM::PlayerTypes::RateStatus rate = getRateAttribute();
-    int rateInt = 1;
+    double rate = getRateAttribute();
 
-    switch (rate) {
-        case MM::PlayerTypes::RateStatus::RATE_NEG_16:
-            rateInt = -16;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_NEG_8:
-            rateInt = -8;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_NEG_4:
-            rateInt = -4;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_NEG_2:
-            rateInt = -2;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_NEG_1:
-            rateInt = -1;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_1:
-            rateInt = 1;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_2:
-            rateInt = 2;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_4:
-            rateInt = 4;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_8:
-            rateInt = 8;
-            break;
-        case MM::PlayerTypes::RateStatus::RATE_16:
-            rateInt = 16;
-            break;
+    if (rate < -16 || rate > 16) {
+        std::cout << "Bad rate selected" << std::endl;
     }
 
-    m_player->setRate (rateInt, NULL);
+    m_player->setRate (rate, NULL);
 }
 
 void PlayerStubImpl::onRemoteRepeatAttributeChanged() {

@@ -20,17 +20,16 @@ void BrowserProvider::listContainersGeneral (std::string path,
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
-                                std::string& containers,
+                                Common::ResultMapList** containers,
                                 std::string sortKey,
                                 MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                *error  = NULL;
     GVariant              *out    = NULL;
-    json_t                *object = NULL;
     dleynaServerMediaContainer2 *mc     = NULL;
 
-    gchar **filterStrv = stdStrvToStrv(filter);
+    gchar **filterStrv = Common::stdStrvToStrv(filter);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
@@ -51,8 +50,7 @@ void BrowserProvider::listContainersGeneral (std::string path,
         return;
     }
 
-    object = DLNADictToJSON (out);
-    DLNAStringify(object, containers, e);
+    *containers = Common::DLNADictToJSON (out);
 
     for (uint i = 0; i < filter.size(); i++) {
         free (filterStrv[i]);
@@ -63,7 +61,7 @@ void BrowserProvider::listChildrenGeneral (std::string path,
                                            uint64_t offset,
                                            uint64_t count,
                                            std::vector<std::string> filter,
-                                           std::string& children,
+                                           Common::ResultMapList** children,
                                            std::string sortKey,
                                            MmError **e)
 {
@@ -73,7 +71,7 @@ void BrowserProvider::listChildrenGeneral (std::string path,
     json_t                *object = NULL;
     dleynaServerMediaContainer2 *mc     = NULL;
 
-    gchar **filterStrv = stdStrvToStrv(filter);
+    gchar **filterStrv = Common::stdStrvToStrv(filter);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
@@ -94,8 +92,9 @@ void BrowserProvider::listChildrenGeneral (std::string path,
         return;
     }
 
-    object = DLNADictToJSON (out);
-    DLNAStringify(object, children, e);
+    object = Common::DLNADictToJSON (out);
+    Common::postProcessJSON (object);
+    *children = object;
 
     for (uint i = 0; i < filter.size(); i++) {
         free (filterStrv[i]);
@@ -106,7 +105,7 @@ void BrowserProvider::listContainers(std::string path,
                                      uint64_t offset,
                                      uint64_t count,
                                      std::vector<std::string> filter,
-                                     std::string& containers,
+                                     Common::ResultMapList** containers,
                                      MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
@@ -118,7 +117,7 @@ void BrowserProvider::listContainersEx(std::string path,
                                        uint64_t count,
                                        std::vector<std::string> filter,
                                        std::string sortKey,
-                                       std::string& containers,
+                                       Common::ResultMapList** containers,
                                        MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
@@ -129,11 +128,11 @@ void BrowserProvider::listChildren(std::string path,
                                    uint64_t offset,
                                    uint64_t count,
                                    std::vector<std::string> filter,
-                                   std::string& containers,
+                                   Common::ResultMapList** children,
                                    MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
-    listChildrenGeneral(path, offset, count, filter, containers, "", e);
+    listChildrenGeneral(path, offset, count, filter, children, "", e);
 }
 
 void BrowserProvider::listChildrenEx(std::string path,
@@ -141,7 +140,7 @@ void BrowserProvider::listChildrenEx(std::string path,
                                      uint64_t count,
                                      std::vector<std::string> filter,
                                      std::string sortKey,
-                                     std::string& containers,
+                                     Common::ResultMapList** containers,
                                      MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
@@ -153,7 +152,7 @@ void BrowserProvider::listItemsGeneral (std::string path,
                                 uint64_t count,
                                 std::vector<std::string> filter,
                                 std::string sortKey,
-                                std::string& items,
+                                Common::ResultMapList** items,
                                 MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
@@ -162,7 +161,7 @@ void BrowserProvider::listItemsGeneral (std::string path,
     json_t                *object = NULL;
     dleynaServerMediaContainer2 *mc     = NULL;
 
-    gchar **filterStrv = stdStrvToStrv(filter);
+    gchar **filterStrv = Common::stdStrvToStrv(filter);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
@@ -183,9 +182,9 @@ void BrowserProvider::listItemsGeneral (std::string path,
         return;
     }
 
-    object = DLNADictToJSON (out);
-    DLNAStringify (object, items, e);
-    json_decref (object);
+    object = Common::DLNADictToJSON (out);
+    Common::postProcessJSON (object);
+    *items = object;
 
     for (uint i = 0; i < filter.size(); i++) {
         free (filterStrv[i]);
@@ -195,7 +194,7 @@ void BrowserProvider::listItems(std::string path,
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
-                                std::string& items,
+                                Common::ResultMapList** items,
                                 MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
@@ -206,7 +205,7 @@ void BrowserProvider::listItemsEx(std::string path,
                                 uint64_t count,
                                 std::vector<std::string> filter,
                                 std::string sortKey,
-                                std::string& items,
+                                Common::ResultMapList** items,
                                 MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
@@ -247,7 +246,7 @@ void BrowserProvider::createContainer(std::string path,
     gchar                       *out    = NULL;
     dleynaServerMediaContainer2 *mc     = NULL;
 
-    gchar **ct = stdStrvToStrv (childTypes);
+    gchar **ct = Common::stdStrvToStrv (childTypes);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
@@ -274,7 +273,7 @@ void BrowserProvider::searchObjectsGeneral(std::string path,
                                     uint64_t count,
                                     std::vector<std::string> filter,
                                     std::string sortKey,
-                                    std::string& objects,
+                                    Common::ResultMapList** objects,
                                     MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
     GError                      *error  = NULL;
@@ -283,7 +282,7 @@ void BrowserProvider::searchObjectsGeneral(std::string path,
     json_t                      *object = NULL;
     guint                        total_items;
 
-    gchar **flt = stdStrvToStrv (filter);
+    gchar **flt = Common::stdStrvToStrv (filter);
 
     if (!BrowserProvider::connectMediaContainer(path, &mc, e))
         return;
@@ -315,9 +314,9 @@ void BrowserProvider::searchObjectsGeneral(std::string path,
         return;
     }
 
-    object = DLNADictToJSON (out);
-    DLNAStringify (object, objects, e);
-    json_decref (object);
+    object = Common::DLNADictToJSON (out);
+    Common::postProcessJSON(object);
+    *objects = object;
 
     for (uint i = 0; i < filter.size(); i++) {
         free (flt[i]);
@@ -328,7 +327,7 @@ void BrowserProvider::searchObjects(std::string path,
                                     uint64_t offset,
                                     uint64_t count,
                                     std::vector<std::string> filter,
-                                    std::string& objects,
+                                    Common::ResultMapList** objects,
                                     MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
@@ -340,7 +339,7 @@ void BrowserProvider::searchObjectsEx(std::string path,
                                       uint64_t count,
                                       std::vector<std::string> filter,
                                       std::string sortKey,
-                                      std::string& objects,
+                                      Common::ResultMapList** objects,
                                       MmError **e)
 {
     std::cout << "In function: " << __FUNCTION__ << std::endl;

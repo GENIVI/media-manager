@@ -54,7 +54,7 @@ public:
     virtual void enqueueUri(std::string uri, MM::PlayerTypes::PlayerError& e);
     virtual void dequeueIndex(uint64_t pos, MM::PlayerTypes::PlayerError& e);
     virtual void dequeueAll(MM::PlayerTypes::PlayerError& e);
-    virtual void getCurrentPlayQueue(std::string& playQueue, MM::PlayerTypes::PlayerError& e);
+    virtual void getCurrentPlayQueue(MM::MediaTypes::ResultMapList& playQueue, MM::PlayerTypes::PlayerError& e);
 
     const uint64_t& getPositionAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
     const uint64_t& getDurationAttribute(const std::shared_ptr<CommonAPI::ClientId> clientId);
@@ -67,6 +67,7 @@ private:
     PlayerProvider *m_player;
     uint64_t pos;
     uint64_t duration;
+    std::vector<std::string> m_generalFilter;
 };
 
 #endif /* PLAYERSTUB_H */

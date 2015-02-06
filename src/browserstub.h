@@ -44,7 +44,7 @@ public:
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
-                                std::string& containers,
+                                MM::MediaTypes::ResultMapList& containers,
                                 MM::BrowserTypes::BrowserError& e);
 
     void listContainersEx(std::string path,
@@ -52,14 +52,14 @@ public:
                           uint64_t count,
                           std::vector<std::string> filter,
                           MM::BrowserTypes::SortKey sortKey,
-                          std::string& children,
+                          MM::MediaTypes::ResultMapList& children,
                           MM::BrowserTypes::BrowserError& e);
 
     void listChildren(std::string path,
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
-                                std::string& children,
+                                MM::MediaTypes::ResultMapList& children,
                                 MM::BrowserTypes::BrowserError& e);
 
     void listChildrenEx(std::string path,
@@ -67,14 +67,14 @@ public:
                           uint64_t count,
                           std::vector<std::string> filter,
                           MM::BrowserTypes::SortKey sortKey,
-                          std::string& containers,
+                          MM::MediaTypes::ResultMapList& children,
                           MM::BrowserTypes::BrowserError& e);
 
     void listItems(std::string path,
                    uint64_t offset,
                    uint64_t count,
                    std::vector<std::string> filter,
-                   std::string& items,
+                   MM::MediaTypes::ResultMapList& items,
                    MM::BrowserTypes::BrowserError& e);
 
     void listItemsEx(std::string path,
@@ -82,7 +82,7 @@ public:
                      uint64_t count,
                      std::vector<std::string> filter,
                      MM::BrowserTypes::SortKey sortKey,
-                     std::string& items,
+                     MM::MediaTypes::ResultMapList& items,
                      MM::BrowserTypes::BrowserError& e);
 
     void createReference(std::string path,
@@ -101,7 +101,7 @@ public:
                        uint64_t offset,
                        uint64_t count,
                        std::vector<std::string> filter,
-                       std::string& objects,
+                       MM::MediaTypes::ResultMapList& objects,
                        MM::BrowserTypes::BrowserError& e);
 
     void searchObjectsEx(std::string path,
@@ -110,11 +110,16 @@ public:
                          uint64_t count,
                          std::vector<std::string> filter,
                          MM::BrowserTypes::SortKey sortKey,
-                         std::string& objects,
+                         MM::MediaTypes::ResultMapList& objects,
                          MM::BrowserTypes::BrowserError& e);
 
 private:
     BrowserProvider *m_browser;
+    std::vector<std::string> m_generalFilter;
+
+    void browserMapToCAPIBrowserMap(Common::ResultMapList* from,
+                               MM::MediaTypes::ResultMapList& to,
+                               std::vector<std::string> filter);
 };
 
 #endif /* BROWSERSTUB_H */

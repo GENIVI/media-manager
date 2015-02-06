@@ -179,7 +179,7 @@ public:
      *  @param queue Current play queue in JSON format
      *  @param e Any error, unchanged when no error has occurred
      */
-    void getCurrentPlayQueue (std::string &queue, MmError **e);
+    void getCurrentPlayQueue (Common::ResultMapList **queue, MmError **e);
 
     /**
      * Callback function to handle the PropertyChanged signal from D-Bus, this

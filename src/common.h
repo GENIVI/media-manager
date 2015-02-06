@@ -7,6 +7,10 @@
 #include <iostream>
 #include <vector>
 
+#include "../src-gen/org/genivi/mediamanager/MediaTypes.h"
+
+namespace MM = org::genivi::mediamanager;
+
 /**
  * Class for errors in the Media Manager
  */
@@ -23,13 +27,22 @@ MmError (std::string msg) {
 std::string message;
 };
 
+class Common {
+public:
+typedef json_t ResultMapList;
+
+static void resultMapListToCAPIResultMapList(ResultMapList* from,
+                                      MM::MediaTypes::ResultMapList& to,
+                                      std::vector<std::string> filter);
+
+static void postProcessJSON (json_t* unprocessed);
 /**
  * Convert DLNA dict (retrieved from dLeyna) to JSON
  *
  * @param element DLNA dict
  * @return JSON representation of input dict
  */
-json_t * DLNADictToJSON (GVariant *element);
+static json_t * DLNADictToJSON (GVariant *element);
 
 /**
  * Convert a JSON representation of a DLNA dict to a string
@@ -37,7 +50,7 @@ json_t * DLNADictToJSON (GVariant *element);
  * @param items the output string for the result
  * @param e Error object, set on failure, unchanged on success
  */
-void DLNAStringify(const json_t *object,
+static void DLNAStringify(const json_t *object,
                    std::string &items,
                    MmError **e);
 
@@ -46,7 +59,7 @@ void DLNAStringify(const json_t *object,
  * @param filter String vector to convert
  * @return null terminated string array
  */
-gchar **stdStrvToStrv(const std::vector<std::string> filter);
+static gchar **stdStrvToStrv(const std::vector<std::string> filter);
 
 
 /**
@@ -56,7 +69,12 @@ gchar **stdStrvToStrv(const std::vector<std::string> filter);
  * @param e Set to an error on failure, unchanged on success
  * @return Vector of paths to renderers or servers, depending on input
  */
-std::vector<std::string> discoverDLNABackends(std::string type,
+static std::vector<std::string> discoverDLNABackends(std::string type,
                                               MmError **e);
 
+private:
+static void postProcessJSONObjectResources (json_t* unprocessed);
+static bool pathIsMediaManager(std::string, std::string, MmError**);
+
+};
 #endif /* COMMON_H */

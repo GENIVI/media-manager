@@ -20,6 +20,26 @@ PlayerStubImpl::PlayerStubImpl (PlayerProvider *player) {
     m_player->stub = this;
 
     initializeDefaultValues();
+
+    m_generalFilter.push_back("Path");
+    m_generalFilter.push_back("Parent");
+    m_generalFilter.push_back("Type");
+    m_generalFilter.push_back("TypeEx");
+    m_generalFilter.push_back("DisplayName");
+    m_generalFilter.push_back("ChildCount");
+    m_generalFilter.push_back("Artists");
+    m_generalFilter.push_back("Artist");
+    m_generalFilter.push_back("Searchable");
+    m_generalFilter.push_back("MIMEType");
+    m_generalFilter.push_back("Album");
+    m_generalFilter.push_back("URI");
+    m_generalFilter.push_back("Genre");
+    m_generalFilter.push_back("Size");
+    m_generalFilter.push_back("TrackNumber");
+    m_generalFilter.push_back("Bitrate");
+    m_generalFilter.push_back("SampleRate");
+    m_generalFilter.push_back("Duration");
+    m_generalFilter.push_back("AlbumArtURL");
 }
 
 void PlayerStubImpl::initializeDefaultValues() {
@@ -206,11 +226,12 @@ void PlayerStubImpl::dequeueAll(MM::PlayerTypes::PlayerError& e) {
     }
 }
 
-void PlayerStubImpl::getCurrentPlayQueue(std::string& playQueue, MM::PlayerTypes::PlayerError& e) {
+void PlayerStubImpl::getCurrentPlayQueue(MM::MediaTypes::ResultMapList& playQueue, MM::PlayerTypes::PlayerError& e) {
     MmError *error = new MmError("");
-    std::string queue;
-    m_player->getCurrentPlayQueue (playQueue, &error);
+    json_t* queue;
+    m_player->getCurrentPlayQueue (&queue, &error);
 
+    Common::resultMapListToCAPIResultMapList(queue, playQueue, m_generalFilter);
     if (error) {
         e = MM::PlayerTypes::PlayerError::BACKEND_UNREACHABLE;
         free (error);

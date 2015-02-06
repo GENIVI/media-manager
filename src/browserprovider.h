@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <vector>
+#include <unordered_map>
 
 #include <gio/gio.h>
 #include <jansson.h>
@@ -66,7 +67,7 @@ public:
                         uint64_t offset,
                         uint64_t count,
                         std::vector<std::string> filter,
-                        std::string& containers,
+                        Common::ResultMapList** containers,
                         MmError **e);
 
     /** @description Extends ListContainers with sorting capabilities
@@ -78,7 +79,7 @@ public:
                           uint64_t count,
                           std::vector<std::string> filter,
                           std::string sortKey,
-                          std::string& containers,
+                          Common::ResultMapList** containers,
                           MmError **e);
 
     /** @description List all children in the given container
@@ -97,7 +98,7 @@ public:
                       uint64_t offset,
                       uint64_t count,
                       std::vector<std::string> filter,
-                      std::string& children,
+                      Common::ResultMapList** children,
                       MmError **e);
 
     /** @description Extends ListChildren with sorting capabilities
@@ -109,7 +110,7 @@ public:
                         uint64_t count,
                         std::vector<std::string> filter,
                         std::string sortKey,
-                        std::string& containers,
+                        Common::ResultMapList** children,
                         MmError **e);
 
     /** @description List all items in the given container
@@ -128,7 +129,7 @@ public:
                    uint64_t offset,
                    uint64_t count,
                    std::vector<std::string> filter,
-                   std::string& items,
+                   Common::ResultMapList** items,
                    MmError **e);
 
     /** @description Extends ListItems with sorting capabilities
@@ -140,7 +141,7 @@ public:
                      uint64_t count,
                      std::vector<std::string> filter,
                      std::string sortKey,
-                     std::string& items,
+                     Common::ResultMapList** items,
                      MmError **e);
 
     /** @description Place a reference in a container, pointing to an object
@@ -191,7 +192,7 @@ public:
                        uint64_t offset,
                        uint64_t count,
                        std::vector<std::string> filter,
-                       std::string& objects,
+                       Common::ResultMapList** objects,
                        MmError **e);
 
     /** @description Extends SearchObjects with sorting capabilities
@@ -204,7 +205,7 @@ public:
                          uint64_t count,
                          std::vector<std::string> filter,
                          std::string sortKey,
-                         std::string& objects,
+                         Common::ResultMapList** objects,
                          MmError **e);
 
 private:
@@ -226,7 +227,7 @@ private:
                                 uint64_t offset,
                                 uint64_t count,
                                 std::vector<std::string> filter,
-                                std::string& containers,
+                                Common::ResultMapList** containers,
                                 std::string sortKey,
                                 MmError **e);
 
@@ -234,7 +235,7 @@ private:
                               uint64_t offset,
                               uint64_t count,
                               std::vector<std::string> filter,
-                              std::string& containers,
+                              Common::ResultMapList** children,
                               std::string sortKey,
                               MmError **e);
 
@@ -244,7 +245,7 @@ private:
                               uint64_t count,
                               std::vector<std::string> filter,
                               std::string sortKey,
-                              std::string& objects,
+                              Common::ResultMapList** objects,
                               MmError **e);
 
     void listItemsGeneral(std::string path,
@@ -252,7 +253,7 @@ private:
                           uint64_t count,
                           std::vector<std::string> filter,
                           std::string sortKey,
-                          std::string& items,
+                          Common::ResultMapList** items,
                           MmError **e);
 };
 

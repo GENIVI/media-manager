@@ -25,5 +25,7 @@ ADD_EXECUTABLE (BrowserProviderTests ${SOURCES} ${HEADERS})
 TARGET_LINK_LIBRARIES (BrowserProviderTests
                        ${PC_GIO_LIBRARIES}
                        ${PC_JANSSON_LIBRARIES}
+                       ${PC_COMMONAPI_LIBRARIES}
+                       ${PC_COMMONAPIDBUS_LIBRARIES}
                        gtest
                        gmock)

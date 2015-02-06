@@ -13,10 +13,122 @@
 
 #include "common.h"
 #include "unistd.h"
+#include <string>
+#include <algorithm>
 
 #define MEDIA_MANAGER_IDENTIFIER "GENIVI MediaManager"
 
-json_t * DLNADictToJSON (GVariant *element) {
+
+void Common::resultMapListToCAPIResultMapList(ResultMapList* from,
+                                      MM::MediaTypes::ResultMapList& to,
+                                      std::vector<std::string> filter) {
+
+    for (size_t i = 0; i < json_array_size (from); i++) {
+        json_t* currentObject = json_array_get(from, i);
+        void* iter = json_object_iter (currentObject);
+        MM::MediaTypes::ResultMap bm;
+        while (iter) {
+            const char* key = json_object_iter_key (iter);
+            if (std::find( filter.begin(), filter.end(), key) != filter.end()) {
+                json_t* value = json_object_iter_value (iter);
+                std::pair<std::string, MM::MediaTypes::ResultUnion> elem;
+                elem.first = key;
+
+                if (json_is_string (value))
+                    elem.second = MM::MediaTypes::ResultUnion (std::string(json_string_value(value)));
+                else if (json_is_integer (value))
+                    elem.second = MM::MediaTypes::ResultUnion ((int64_t)json_integer_value(value));
+                else if (json_is_number (value))
+                    elem.second = MM::MediaTypes::ResultUnion (json_number_value(value));
+                else if (json_is_true (value))
+                    elem.second = MM::MediaTypes::ResultUnion (true);
+                else if (json_is_false (value))
+                    elem.second = MM::MediaTypes::ResultUnion (false);
+                else if (json_is_array (value)) {
+                    std::vector<std::string> capiArr;
+                    json_t *arr = value;
+                    for (size_t i = 0; i < json_array_size (arr); i++) {
+                        json_t* arrval = json_array_get (arr, i);
+                        if (!arrval) {
+                            std::cout << "Invalid array!" << std::endl;
+                            break;
+                        }
+                        if (json_is_string (arrval)) {
+                            capiArr.push_back (std::string(json_string_value(arrval)));
+                        } else {
+                            std::cout << "Only string arrays supported" << std::endl;
+                        }
+                    }
+                    elem.second = capiArr;
+                }
+                else {
+                    std::cout << "Unhandled key: " << key << std::endl;
+                }
+                bm.insert(elem);
+            }
+            iter = json_object_iter_next(currentObject, iter);
+        }
+        to.push_back(bm);
+    }
+}
+
+
+/* Find "URLs" in Resources object. If there is one beginning with
+ * "file://", pick that one, else pick any other. Put the selected URL in
+ * the URI field */
+void Common::postProcessJSONObjectResources (json_t* unprocessed) {
+    std::vector<std::string> URLs;
+    if (!json_is_object (unprocessed)) {
+        std::cout << "Can't post-process. Not an object" << std::endl;
+        return;
+    }
+    void* iter = json_object_iter (unprocessed);
+    while (iter) {
+        const char *key = json_object_iter_key (iter);
+        json_t* value = json_object_iter_value (iter);
+
+        if (g_strcmp0 (key, "Resources") == 0) {
+            json_t* resourceArr = value;
+            if (!json_is_array (resourceArr)) {
+                std::cout << "Resources is not an array!" << std::endl;
+                goto end_loop;
+            }
+
+            for (size_t i = 0; i < json_array_size (resourceArr); i++) {
+                json_t* element = json_array_get (resourceArr, i);
+
+                json_t* uri = json_object_get (element, "URL");
+                if (uri) {
+                    if (json_is_string (uri)) {
+                        URLs.push_back (json_string_value (uri));
+                    }
+                }
+            }
+        }
+        end_loop:
+        iter = json_object_iter_next (unprocessed, iter);
+    }
+
+    for (size_t i = 0; i < URLs.size(); i++) {
+        json_object_set_new (unprocessed, "URI", json_string(URLs.at(i).c_str()));
+        if (URLs.at(i).find("file://") != std::string::npos)
+            break;
+    }
+}
+
+/** Change the JSON obtained from DLNA to match the JSON expected by the Media
+ * Manager*/
+void Common::postProcessJSON (json_t* unprocessed) {
+
+    if (json_is_array(unprocessed)) {
+        for (size_t i = 0; i < json_array_size(unprocessed); i++) {
+            json_t* element = json_array_get (unprocessed, i);
+            postProcessJSONObjectResources (element);
+        }
+    }
+}
+
+json_t * Common::DLNADictToJSON (GVariant *element) {
     if (!element) {
         std::cout << "Element is null" << std::endl;
         return NULL;
@@ -74,7 +186,7 @@ json_t * DLNADictToJSON (GVariant *element) {
     return NULL;
 }
 
-void DLNAStringify(const json_t *object,
+void Common::DLNAStringify(const json_t *object,
                    std::string &items,
                    MmError **e) {
     char *json = json_dumps(object, 0);
@@ -91,7 +203,7 @@ void DLNAStringify(const json_t *object,
     free(json);
 }
 
-gchar **stdStrvToStrv(const std::vector<std::string> filter) {
+gchar **Common::stdStrvToStrv(const std::vector<std::string> filter) {
     gchar **filterStrv = new gchar*[filter.size()+1];
     for (uint i = 0; i < filter.size(); i++) {
         filterStrv[i] = g_strdup(filter[i].c_str());
@@ -101,7 +213,7 @@ gchar **stdStrvToStrv(const std::vector<std::string> filter) {
     return filterStrv;
 }
 
-bool pathIsMediaManager(std::string type, std::string path, MmError **e) {
+bool Common::pathIsMediaManager(std::string type, std::string path, MmError **e) {
     GError *error = NULL;
     GDBusProxy *proxy = NULL;
     GDBusConnection *conn = g_bus_get_sync (G_BUS_TYPE_SESSION,
@@ -172,7 +284,7 @@ bool pathIsMediaManager(std::string type, std::string path, MmError **e) {
 
 }
 
-std::vector<std::string> discoverDLNABackends(std::string type,
+std::vector<std::string> Common::discoverDLNABackends(std::string type,
                                               MmError **e)
 {
     GError *error = NULL;

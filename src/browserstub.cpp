@@ -18,6 +18,26 @@ namespace MM = org::genivi::mediamanager;
 
 BrowserStubImpl::BrowserStubImpl (BrowserProvider *browser) {
     m_browser = browser;
+
+    m_generalFilter.push_back("Path");
+    m_generalFilter.push_back("Parent");
+    m_generalFilter.push_back("Type");
+    m_generalFilter.push_back("TypeEx");
+    m_generalFilter.push_back("DisplayName");
+    m_generalFilter.push_back("ChildCount");
+    m_generalFilter.push_back("Artists");
+    m_generalFilter.push_back("Artist");
+    m_generalFilter.push_back("Searchable");
+    m_generalFilter.push_back("MIMEType");
+    m_generalFilter.push_back("Album");
+    m_generalFilter.push_back("URI");
+    m_generalFilter.push_back("Genre");
+    m_generalFilter.push_back("Size");
+    m_generalFilter.push_back("TrackNumber");
+    m_generalFilter.push_back("Bitrate");
+    m_generalFilter.push_back("SampleRate");
+    m_generalFilter.push_back("Duration");
+    m_generalFilter.push_back("AlbumArtURL");
 }
 
 std::string sortKeyToString (MM::BrowserTypes::SortKey sk) {
@@ -34,22 +54,24 @@ std::string sortKeyToString (MM::BrowserTypes::SortKey sk) {
 
 void BrowserStubImpl::discoverMediaManagers(std::vector<std::string> &idents,
                                             MM::BrowserTypes::BrowserError& e) {
-    idents = discoverDLNABackends("servers", NULL);
+    idents = Common::discoverDLNABackends("servers", NULL);
 }
 
 void BrowserStubImpl::listContainers(std::string path,
                             uint64_t offset,
                             uint64_t count,
                             std::vector<std::string> filter,
-                            std::string& containers,
+                            MM::MediaTypes::ResultMapList& containers,
                             MM::BrowserTypes::BrowserError& e) {
-
+    Common::ResultMapList* bml = json_array();
     m_browser->listContainers(path,
                               offset,
                               count,
                               filter,
-                              containers,
+                              &bml,
                               NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, containers, m_generalFilter);
 }
 
 void BrowserStubImpl::listChildrenEx(std::string path,
@@ -57,31 +79,37 @@ void BrowserStubImpl::listChildrenEx(std::string path,
                                        uint64_t count,
                                        std::vector<std::string> filter,
                                        MM::BrowserTypes::SortKey sortKey,
-                                       std::string& children,
+                                       MM::MediaTypes::ResultMapList& children,
                                        MM::BrowserTypes::BrowserError& e) {
+    Common::ResultMapList* bml = json_array();
 
     m_browser->listChildrenEx(path,
                               offset,
                               count,
                               filter,
                               sortKeyToString(sortKey),
-                              children,
+                              &bml,
                               NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, children, m_generalFilter);
 }
 
 void BrowserStubImpl::listChildren(std::string path,
                                    uint64_t offset,
                                    uint64_t count,
                                    std::vector<std::string> filter,
-                                   std::string& children,
+                                   MM::MediaTypes::ResultMapList& children,
                                    MM::BrowserTypes::BrowserError& e) {
+    Common::ResultMapList* bml = json_array();
 
     m_browser->listChildren(path,
                             offset,
                             count,
                             filter,
-                            children,
+                            &bml,
                             NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, children, m_generalFilter);
 }
 
 void BrowserStubImpl::listContainersEx(std::string path,
@@ -89,31 +117,38 @@ void BrowserStubImpl::listContainersEx(std::string path,
                                        uint64_t count,
                                        std::vector<std::string> filter,
                                        MM::BrowserTypes::SortKey sortKey,
-                                       std::string& containers,
+                                       MM::MediaTypes::ResultMapList& containers,
                                        MM::BrowserTypes::BrowserError& e) {
+
+    Common::ResultMapList* bml = json_array();
 
     m_browser->listContainersEx(path,
                                 offset,
                                 count,
                                 filter,
                                 sortKeyToString(sortKey),
-                                containers,
+                                &bml,
                                 NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, containers, m_generalFilter);
 }
 
 void BrowserStubImpl::listItems(std::string path,
                             uint64_t offset,
                             uint64_t count,
                             std::vector<std::string> filter,
-                            std::string& items,
+                            MM::MediaTypes::ResultMapList& items,
                             MM::BrowserTypes::BrowserError& e) {
+    Common::ResultMapList* bml = json_array();
 
     m_browser->listItems(path,
                          offset,
                          count,
                          filter,
-                         items,
+                         &bml,
                          NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, items, m_generalFilter);
 }
 
 void BrowserStubImpl::listItemsEx(std::string path,
@@ -121,16 +156,19 @@ void BrowserStubImpl::listItemsEx(std::string path,
                                   uint64_t count,
                                   std::vector<std::string> filter,
                                   MM::BrowserTypes::SortKey sortKey,
-                                  std::string& items,
+                                  MM::MediaTypes::ResultMapList& items,
                                   MM::BrowserTypes::BrowserError& e) {
+    Common::ResultMapList* bml = json_array();
 
     m_browser->listItemsEx(path,
                            offset,
                            count,
                            filter,
                            sortKeyToString(sortKey),
-                           items,
+                           &bml,
                            NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, items, m_generalFilter);
 }
 
 void BrowserStubImpl::createReference(std::string path,
@@ -161,15 +199,19 @@ void BrowserStubImpl::searchObjects(std::string path,
                                     uint64_t offset,
                                     uint64_t count,
                                     std::vector<std::string> filter,
-                                    std::string& objects,
+                                    MM::MediaTypes::ResultMapList& items,
                                     MM::BrowserTypes::BrowserError& e) {
+    Common::ResultMapList* bml = json_array();
+
     m_browser->searchObjects (path,
                               query,
                               offset,
                               count,
                               filter,
-                              objects,
+                              &bml,
                               NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, items, m_generalFilter);
 }
 
 void BrowserStubImpl::searchObjectsEx(std::string path,
@@ -178,14 +220,18 @@ void BrowserStubImpl::searchObjectsEx(std::string path,
                                       uint64_t count,
                                       std::vector<std::string> filter,
                                       MM::BrowserTypes::SortKey sortKey,
-                                      std::string& objects,
+                                      MM::MediaTypes::ResultMapList& items,
                                       MM::BrowserTypes::BrowserError& e) {
+    Common::ResultMapList* bml = json_array();
+
     m_browser->searchObjectsEx (path,
                                 query,
                                 offset,
                                 count,
                                 filter,
                                 sortKeyToString(sortKey),
-                                objects,
+                                &bml,
                                 NULL);
+
+    Common::resultMapListToCAPIResultMapList(bml, items, m_generalFilter);
 }

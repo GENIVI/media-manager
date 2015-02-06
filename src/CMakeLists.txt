@@ -34,9 +34,9 @@ SET (HEADERS
     browserstub.h
     browserstub.h)
 
-ADD_CUSTOM_COMMAND (OUTPUT ${GENERATED_SOURCES_CAPI} ${GENERATED_HEADERS_CAPI}
-                    COMMAND git submodule init &&
-                    git submodule update)
+#ADD_CUSTOM_COMMAND (OUTPUT ${GENERATED_SOURCES_CAPI} ${GENERATED_HEADERS_CAPI}
+#                    COMMAND git submodule init &&
+#                    git submodule update)
 
 ADD_EXECUTABLE (media-manager
                 ${SOURCES}

@@ -35,7 +35,7 @@ PlayerProvider::PlayerProvider() :
     m_volume(1)
 {}
 char *PlayerProvider::findFirstPlayer(MmError **e) {
-    std::vector<std::string> renderers = discoverDLNABackends ("renderers", e);
+    std::vector<std::string> renderers = Common::discoverDLNABackends ("renderers", e);
     if (renderers.size() == 0) {
         std::cout << "No renderers found!" << std::endl;
         return NULL;
@@ -109,7 +109,7 @@ void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
 
     int offset = 0;
     int count = 100000;
-    gchar **filterStrv = stdStrvToStrv(filter);
+    gchar **filterStrv = Common::stdStrvToStrv(filter);
 
     if (!PlayerProvider::connectMediaContainer (playlistPath, &mc, e))
         return;
@@ -127,7 +127,7 @@ void PlayerProvider::openPlaylist (std::string playlistPath, MmError **e) {
     std::cout << "Setting play queue to: " << playlistPath << std::endl;
 
     json_decref (playqueue);
-    playqueue = DLNADictToJSON (out);
+    playqueue = Common::DLNADictToJSON (out);
 
     playQueuePosition = 0;
     changePlayQueuePosition (0, e);
@@ -522,7 +522,7 @@ void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
 
     filter.push_back("*");
 
-    gchar **filterStrv = stdStrvToStrv(filter);
+    gchar **filterStrv = Common::stdStrvToStrv(filter);
 
     if (!PlayerProvider::connectMediaObject(uri, &mo, e))
         return;
@@ -559,7 +559,7 @@ void PlayerProvider::enqueueUri (std::string uri, MmError **e) {
             if (g_variant_get_string(ref, NULL) == uri) {
                 std::cout << "Enqueueing " << uri << std::endl;
 
-                json_t *js = DLNADictToJSON(child);
+                json_t *js = Common::DLNADictToJSON(child);
                 json_array_append(playqueue, js);
             }
         }
@@ -578,9 +578,11 @@ void PlayerProvider::dequeueAll (MmError **e) {
     json_array_clear(playqueue);
 }
 
-void PlayerProvider::getCurrentPlayQueue (std::string &queue, MmError **e) {
+void PlayerProvider::getCurrentPlayQueue (Common::ResultMapList **queue, MmError **e) {
     std::cout << "In function: " << __FUNCTION__ << std::endl;
-    DLNAStringify(playqueue,queue,NULL);
+    json_t *playQueueCopy = json_copy(playqueue);
+    Common::postProcessJSON(playQueueCopy);
+    *queue = playQueueCopy;
 }
 
 bool PlayerProvider::changePlayQueuePosition (int increment, MmError **e) {
